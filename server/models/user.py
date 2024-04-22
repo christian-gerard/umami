@@ -10,9 +10,9 @@ class User(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(20), unique=True)
-    email = db.Column(db.String, unique=True)
-    role = db.Column(db.Integer)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    role = db.Column(db.Integer, nullable=False)
     _password_hash = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
@@ -22,6 +22,7 @@ class User(db.Model, SerializerMixin):
     cookbooks = db.relationship('Cookbook', back_populates='user')
 
     # # # # # Serialize
+    serialize_rules=('-recipes','-cookbooks')
 
     # # # # # Representation
     def __repr__(self):
@@ -33,10 +34,11 @@ class User(db.Model, SerializerMixin):
         """
 
     # # # # # Property
+    @validates('username')
+    def validate_username(self, key, username):
+        assert username, "Username must be provided"
+        return username
 
-
-
-    
     # # # # # Hybrid Property
     @hybrid_property
     def password_hash(self):

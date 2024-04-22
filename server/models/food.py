@@ -10,14 +10,14 @@ class Food(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(20), nullable=False, unique=True)
     type = db.Column(db.String(20))
 
     # # # # # Relationship
     ingredients = db.relationship('Ingredient', back_populates='food')
 
     # # # # # Serialize
-
+    serialize_rules=('-ingredients',)
 
     # # # # # Representation
     def __repr__(self):
@@ -27,5 +27,11 @@ class Food(db.Model, SerializerMixin):
                 created_at: {self.created_at}
                 />
         """
-
     # # # # # Validate
+    @validates('name')
+    def validate_name(self, key, name):
+        pass
+
+    @validates('type')
+    def validate_type(self, key, type):
+        pass
