@@ -65,14 +65,7 @@ with app.app_context():
     # # # # # Generate Food
     print('[purple]Generating Food 🗣[/purple]  ...\n')
     try:
-        foods = []
-        for _ in range(1000):
-            food = Food(
-                name=fake.word()
-                )
-            foods.append(food)
-        db.session.add_all(foods)
-        db.session.commit()
+
         print('\t[green]Food Complete[/green] ✅\n')
     except Exception as e:
         print('\t[red]Food Generation Failed[/red] 😞\n' + str(e))
