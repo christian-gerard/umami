@@ -45,6 +45,13 @@ class User(db.Model, SerializerMixin):
         assert '@' in email, 'Email address must contain @ symbol'
         assert '.' in email.split('@')[1], 'Email address must contain domain'
         return email
+    
+    @validates('role')
+    def validate_role(self,key,role):
+        roles = ( 0, 1)
+        assert role, "Must provide an integer for role"
+        assert role in roles, "Must be a valid role integer"
+        return role
 
     # # # # # Hybrid Property
     @hybrid_property
