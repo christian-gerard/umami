@@ -11,7 +11,7 @@ class Food(db.Model, SerializerMixin):
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20), nullable=False, unique=True)
-    type = db.Column(db.String(20))
+    type = db.Column(db.String(20), nullable=False)
 
     # # # # # Relationship
     ingredients = db.relationship('Ingredient', back_populates='food')
