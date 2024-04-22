@@ -10,7 +10,7 @@ class Cookbook(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(20), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
