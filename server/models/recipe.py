@@ -10,8 +10,8 @@ class Recipe(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20))
-    steps = db.Column(db.String)
+    name = db.Column(db.String(20), nullable=False)
+    steps = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
@@ -22,7 +22,7 @@ class Recipe(db.Model, SerializerMixin):
     ingredients = db.relationship('Ingredient', back_populates='recipe')
 
     # # # # # Serialize
-
+    serialize_rules=('-user','-cookbooks','-ingredients')
 
     # # # # # Representation
     def __repr__(self):
@@ -34,3 +34,6 @@ class Recipe(db.Model, SerializerMixin):
         """
 
     # # # # # Validate
+    @validates('name')
+    def validate_name(self, key, name):
+        pass

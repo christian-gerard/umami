@@ -10,7 +10,7 @@ class Ingredient(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    amount = db.Column(db.Integer)
+    amount = db.Column(db.Integer, nullable=False)
     measurement_unit = db.Column(db.String)
     food_id = db.Column(db.Integer, db.ForeignKey('foods.id'))
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
@@ -20,7 +20,7 @@ class Ingredient(db.Model, SerializerMixin):
     recipe = db.relationship('Recipe', back_populates='ingredients')
 
     # # # # # Serialize
-
+    serialize_rules=('-food','-recipe')
     # # # # # Representation
     def __repr__(self):
         return f""" 
@@ -31,3 +31,6 @@ class Ingredient(db.Model, SerializerMixin):
         """
 
     # # # # # Validate
+    @validates('amount')
+    def validate_amount(self, key, amount):
+        pass

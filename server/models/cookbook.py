@@ -20,7 +20,7 @@ class Cookbook(db.Model, SerializerMixin):
     recipe = db.relationship('Recipe', back_populates='cookbooks')
 
     # # # # # Serialize
-
+    serialize_rules = ('-user','-recipe')
 
     # # # # # Representation
     def __repr__(self):
@@ -32,3 +32,21 @@ class Cookbook(db.Model, SerializerMixin):
         """
 
     # # # # # Validate
+    @validates('name')
+    def validate_name(self, key, name):
+        assert len(name) > 0, "Must provide a name"
+        return name
+
+    @validates('user_id')
+    def validate_user_id(self, key, user_id):
+        assert user_id, "Must include user_id"
+        assert user_id > 0, "User_id must be a valid integer"
+        return user_id
+    
+    @validates('recipe_id')
+    def validate_recipe_id(self, key, recipe_id):
+        assert recipe_id, "Must include recipe_id"
+        assert recipe_id > 0, "Recipe_id must be a valid integer"
+        return recipe_id
+
+
