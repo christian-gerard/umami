@@ -13,9 +13,8 @@ class Food(db.Model, SerializerMixin):
     name = db.Column(db.String(20))
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
 
-
     # # # # # Relationship
-
+    ingredients = db.relationship('Ingredient', back_populates='food')
 
     # # # # # Serialize
 
