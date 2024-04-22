@@ -37,7 +37,14 @@ class User(db.Model, SerializerMixin):
     @validates('username')
     def validate_username(self, key, username):
         assert username, "Username must be provided"
+        assert len(username) < 21, "Username must not be over 20 characters"
         return username
+    
+    @validates('email')
+    def validate_email(self,key,email):
+        assert '@' in email, 'Email address must contain @ symbol'
+        assert '.' in email.split('@')[1], 'Email address must contain domain'
+        return email
 
     # # # # # Hybrid Property
     @hybrid_property
