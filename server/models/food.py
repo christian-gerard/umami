@@ -30,8 +30,10 @@ class Food(db.Model, SerializerMixin):
     # # # # # Validate
     @validates('name')
     def validate_name(self, key, name):
-        pass
-
+        assert name, "Name must be provided"
+       
     @validates('type')
     def validate_type(self, key, type):
-        pass
+        types = ('fruit', 'vegetable', 'grain', 'protein', 'dairy', 'oils'  )
+        assert type in types, "Type must match the types listed: fruits, vegetables... "
+        return type
