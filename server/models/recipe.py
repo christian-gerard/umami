@@ -10,8 +10,8 @@ class Recipe(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20), nullable=False)
-    steps = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(20))
+    steps = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
@@ -38,6 +38,7 @@ class Recipe(db.Model, SerializerMixin):
     def validate_name(self, key, name):
         assert name, "Name must be provided"
         assert len(name) < 51, "Name must not be over 50 characters "
+        return name
 
     @validates('steps')
     def validate_steps(self, key, steps):
