@@ -14,16 +14,20 @@ class FoodSchema(ma.SQLAlchemyAutoSchema):
             error="Name must not be more than 20 characters")
         )
 
-    body = fields.String(
+    type = fields.String(
         require=True, 
-        validate=validate.Length(
-            min=10,
-            max=40000, 
-            error="Body must be between 10 and 40,000 characters")
+        validate=validate.OneOf(
+            choices=[
+                'fruit', 
+                'vegetable', 
+                'grain', 
+                'protein', 
+                'dairy', 
+                'oils']
+            )
         )
-
 
     ingredients = fields.Nested('IngredientSchema')
 
-recipe_schema = FoodSchema()
-recipes_schema = FoodSchema(many=True)
+food_schema = FoodSchema()
+foods_schema = FoodSchema(many=True)

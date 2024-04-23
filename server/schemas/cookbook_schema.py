@@ -21,5 +21,5 @@ class CookbookSchema(ma.SQLAlchemyAutoSchema):
     user = fields.Nested('UserSchema')
 
 
-recipe_schema = CookbookSchema()
-recipes_schema = CookbookSchema(many=True)
+cookbook_schema = CookbookSchema()
+cookbooks_schema = CookbookSchema(many=True)

@@ -1,40 +1,35 @@
-from . import ma, fields, validate, validates, Recipe, datetime
+from . import ma, fields, validate, validates, Ingredient, datetime
 
-class RecipeSchema(ma.SQLAlchemyAutoSchema):
+class IngredientSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Recipe
+        model = Ingredient
         load_instance = True
         ordered = True
         partial = ('id',)
 
-    title = fields.String(
+    amount = fields.String(
         validate=validate.Length(
             max=50,
             error="Title must be less than 50 characters")
         )
 
-    body = fields.String(
+    measurement_unit = fields.String(
         require=True, 
-        validate=validate.Length(
-            min=10,
-            max=40000, 
-            error="Body must be between 10 and 40,000 characters")
-        )
+        validate=validate.OneOf(choices=['cups', 'fluid ounces', 'liters']
+            )
+    )
 
-    date = fields.String(require=True)
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
 
-    user_id = fields.Integer(required=True)
-    user = fields.Nested('UserSchema', exclude=('created_at',))
+    food_id = fields.Integer(required=True)
+    recipe_id = fields.Integer(required=True)
 
-    category_id = fields.Integer(required=True)
-    category = fields.Nested('CategorySchema', exclude=('created_at',))
+    food = fields.Nested('FoodSchema')
+    recipe = fields.Nested('RecipeSchema')
 
     @validates('date')
     def validate_date(self, date):
         if not datetime.strptime(date, "%Y-%m-%d"):
             raise ValueError('Date must be in \"YYYY-MM-DD\"')
 
-recipe_schema = RecipeSchema()
-recipes_schema = RecipeSchema(many=True)
+ingredient_schema = IngredientSchema()
+ingredients_schema = IngredientSchema(many=True)
