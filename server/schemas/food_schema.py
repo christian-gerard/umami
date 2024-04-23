@@ -16,7 +16,7 @@ class FoodSchema(ma.SQLAlchemyAutoSchema):
 
     description = fields.String()
 
-    type_id = fields.Integer()
+    type_id = fields.String()
 
     ingredients = fields.Nested('IngredientSchema')
 
