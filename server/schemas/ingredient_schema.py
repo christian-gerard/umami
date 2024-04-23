@@ -26,10 +26,5 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
     food = fields.Nested('FoodSchema')
     recipe = fields.Nested('RecipeSchema')
 
-    @validates('date')
-    def validate_date(self, date):
-        if not datetime.strptime(date, "%Y-%m-%d"):
-            raise ValueError('Date must be in \"YYYY-MM-DD\"')
-
 ingredient_schema = IngredientSchema()
 ingredients_schema = IngredientSchema(many=True)

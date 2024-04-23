@@ -1,3 +1,5 @@
+import csv
+import random
 from faker import Faker
 from config import app
 from models.__init__ import db
@@ -7,12 +9,20 @@ from models.cookbook import Cookbook
 from models.ingredient import Ingredient
 from models.food import Food
 
-
 import sys
 import random
 from rich import print
 import ipdb
 
+foundation_foods = 'data/foundation_foods.csv'
+
+def seed_foods(csv_file):
+    with open(csv_file, 'r', newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        data = [Food(**row) for row in reader]
+        db.session.add_all(data)
+        db.session.commit()
+    
 fake = Faker()
 
 with app.app_context():
@@ -63,10 +73,53 @@ with app.app_context():
 
 
     # # # # # Generate Food
-    print('[purple]Generating Food 🗣[/purple]  ...\n')
+    print('[purple]Generating Food 🍱[/purple]  ...\n')
     try:
-
+        seed_foods(foundation_foods)
         print('\t[green]Food Complete[/green] ✅\n')
     except Exception as e:
         print('\t[red]Food Generation Failed[/red] 😞\n' + str(e))
+        sys.exit(1)
+
+
+    # # # # # Generate Recipes
+    print('[purple]Generating Recipes 📖[/purple]  ...\n')
+    try:
+        recipes = []
+        for _ in range(10):
+            recipe = Recipe(name=fake.word(), steps='StepsTestFORTENCHAR', user_id=random.randint(1,3) )
+            recipes.append(recipe)
+        db.session.add_all(recipes)
+        db.session.commit()
+        print('\t[green]Recipes Complete[/green] ✅\n')
+    except Exception as e:
+        print('\t[red]Recipe Generation Failed[/red] 😞\n' + str(e))
+        sys.exit(1)
+
+    # # # # # Generate Cookbooks
+    print('[purple]Generating Cookbooks 📚[/purple]  ...\n')
+    try:
+        cookbooks = []
+        for _ in range(5):
+            cookbook = Cookbook(name=fake.word(), user_id=random.randint(1,3), recipe_id=random.randint(1,5) )
+            cookbooks.append(cookbook)
+        db.session.add_all(cookbooks)
+        db.session.commit()
+        print('\t[green]Cookbooks Complete[/green] ✅\n')
+    except Exception as e:
+        print('\t[red]Cookbooks Generation Failed[/red] 😞\n' + str(e))
+        sys.exit(1)
+
+    # # # # # Generate Ingredients
+    print('[purple]Generating Ingredients 🥕[/purple]  ...\n')
+    try:
+        ingredients = []
+        for _ in range(5):
+            ingredient = Ingredient(amount=10, measurement_unit='cups', food_id=random.randint(1,3), recipe_id=random.randint(1,5) )
+            ingredients.append(ingredient)
+        db.session.add_all(ingredients)
+        db.session.commit()
+        print('\t[green]Ingredients Complete[/green] ✅\n')
+    except Exception as e:
+        print('\t[red]Ingredients Generation Failed[/red] 😞\n' + str(e))
         sys.exit(1)

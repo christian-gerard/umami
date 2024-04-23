@@ -25,7 +25,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
     role = fields.Integer(
         required=True,
-        validate=validate.Oneof(choices=[0,1])
+        validate=validate.OneOf(choices=[0,1])
     )
 
     password_hash = fields.String(
