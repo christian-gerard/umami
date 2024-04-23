@@ -10,8 +10,9 @@ class Food(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(20), nullable=False, unique=True)
-    type = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String)
+    type_id = db.Column(db.Integer)
 
     # # # # # Relationship
     ingredients = db.relationship('Ingredient', back_populates='food')
@@ -24,13 +25,13 @@ class Food(db.Model, SerializerMixin):
         return f""" 
             <Food {self.id}
                 name: {self.name}
-                created_at: {self.created_at}
                 />
         """
     # # # # # Validate
     @validates('name')
     def validate_name(self, key, name):
-        assert name, "Name must be provided"
+        # assert name, "Name must be provided"
+        return name
        
     @validates('type')
     def validate_type(self, key, type):

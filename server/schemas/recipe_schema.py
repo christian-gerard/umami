@@ -21,7 +21,7 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
             error="Body must be between 10 and 40,000 characters")
         )
 
-    user_id = fields.Integer(required=True)
+    user_id = fields.Integer()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
 
