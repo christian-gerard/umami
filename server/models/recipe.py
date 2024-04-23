@@ -1,0 +1,46 @@
+from . import SerializerMixin, validates, re, db
+from sqlalchemy.ext.hybrid import hybrid_property
+from config import flask_bcrypt
+from datetime import datetime
+import re
+
+class Recipe(db.Model, SerializerMixin):
+    # # # # # Table Name
+    __tablename__ = 'recipes'
+
+    # # # # # Attribute
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(20), nullable=False)
+    steps = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+
+    # # # # # Relationship
+    user = db.relationship('User', back_populates='recipes')
+    cookbooks = db.relationship('Cookbook', back_populates='recipe')
+    ingredients = db.relationship('Ingredient', back_populates='recipe')
+
+    # # # # # Serialize
+    serialize_rules=('-user','-cookbooks','-ingredients')
+
+    # # # # # Representation
+    def __repr__(self):
+        return f""" 
+            <Recipe {self.id}
+                name: {self.name}
+                created_at: {self.created_at}
+                />
+        """
+
+    # # # # # Validate
+    @validates('name')
+    def validate_name(self, key, name):
+        assert name, "Name must be provided"
+        assert len(name) < 51, "Name must not be over 50 characters "
+
+    @validates('steps')
+    def validate_steps(self, key, steps):
+        assert steps, "Steps must be provided"
+        assert len(steps) > 10, "Steps must be at least 10 characters"
+        return steps
