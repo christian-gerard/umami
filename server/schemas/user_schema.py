@@ -19,6 +19,15 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         ]
     )
 
+    email = fields.Email(
+        required=True
+    )
+
+    role = fields.Integer(
+        required=True,
+        validate=validate.Oneof(choices=[0,1])
+    )
+
     password_hash = fields.String(
         data_key="password_hash",
         required=True,
@@ -28,12 +37,22 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         load_only=True
     )
 
-    entries = fields.Nested(
-        "EntrySchema",
-        only=('title', 'body', 'date', 'id'),
-        exclude=('user',),
-        many=True
-    )
+    created_at = fields.DateTime()
+    updated_at = fields.DateTime()
+
+    # recipes = fields.Nested(
+    #     "RecipeSchema",
+    #     only=('title', 'body', 'date', 'id'),
+    #     exclude=('user',),
+    #     many=True
+    # )
+
+    # cookbooks = fields.Nested(
+    #     "CookbookSchema",
+    #     only=('title', 'body', 'date', 'id'),
+    #     exclude=('user',),
+    #     many=True
+    # )
 
     def load(self, data, instance=None, *, partial=False, **kwargs):
         # Load the instance using Marshmallow's default behavior
