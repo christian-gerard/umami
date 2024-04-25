@@ -4,6 +4,8 @@ import Error from './Error'
 import Auth from '../components/Auth'
 import Recipe from '../pages/recipes/Recipe'
 import FindRecipe from '../pages/recipes/FindRecipe'
+import Cookbook from '../pages/recipes/Cookbook'
+import Profile from '../pages/profile/Profile'
 
 
 const router = createBrowserRouter([
@@ -21,8 +23,16 @@ const router = createBrowserRouter([
                 element: <FindRecipe />,
             },
             {
-                path: '/recipes',
-                element: <Recipe />,
+                path: '/cookbook',
+                element: <Cookbook />,
+            },
+            {
+                path: '/recipes/:id',
+                element: <Recipe />
+            },
+            {
+                path: '/profile',
+                element: <Profile />
             }
 
 		]

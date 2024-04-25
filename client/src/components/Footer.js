@@ -3,7 +3,7 @@
 function Footer() {
 
     return (
-        <h1>FOOTER</h1>
+        <p className=''>built by christian gerard</p>
     )
 }
 
