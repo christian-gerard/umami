@@ -83,10 +83,10 @@ function Auth() {
 	})
 
     return (
-        <div className='text-3xl '>
+        <div className='text-2xl text-white bg-shittake  flex flex-col  w-25 mt-20 p-6 rounded-lg'>
 			<h2>{isLogin ? 'Login':'Sign Up'}</h2>
 			<Formik onSubmit={formik.handleSubmit}>
-				<Form className='flex justify-center flex-col' onSubmit={formik.handleSubmit}>
+				<Form className='flex justify-center flex-col p-1' onSubmit={formik.handleSubmit}>
 					<Field
 						type='text'
 						name='username'
@@ -94,11 +94,11 @@ function Auth() {
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 						value={formik.values.username}
-						className='input'
+						className='m-2 text-black'
 						autoComplete='username'
 					/>
 					{formik.errors.username && formik.touched.username && (
-						<div className='error-message show'>
+						<div className=''>
 							{formik.errors.username}
 						</div>
 					)}
@@ -109,7 +109,7 @@ function Auth() {
 						onChange={formik.handleChange}
 						onBlur={formik.handleBlur}
 						value={formik.values.password_hash}
-						className='input'
+						className='m-2 text-black'
 						autoComplete='current-password'
 					/>
 					{formik.errors.password_hash &&
@@ -127,7 +127,7 @@ function Auth() {
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
 								value={formik.values.confirmPassword}
-								className='input'
+								className='m-2 text-black'
 							/>
 							{formik.errors.confirmPassword &&
 								formik.touched.confirmPassword && (
@@ -142,7 +142,7 @@ function Auth() {
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
 								value={formik.values.email}
-								className='input'
+								className='m-2 text-black'
 							/>
 							{formik.errors.email &&
 								formik.touched.email && (
@@ -154,7 +154,7 @@ function Auth() {
 					)}
 					<input  type='submit' className='submit bg-blue-500' value={isLogin ? 'Login' : 'Sign up'} />
 		
-					<button type='button' className='change-form' onClick={() => setIsLogin(!isLogin)} >{isLogin ? "Create New Account" : "Login"}</button>
+					<button type='button' className='text-lg text-blue-200' onClick={() => setIsLogin(!isLogin)} >{isLogin ? "Create New Account" : "Login to Account"}</button>
 					
 				</Form>
 			</Formik>

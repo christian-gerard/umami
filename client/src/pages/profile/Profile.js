@@ -15,15 +15,23 @@ function Profile() {
     }
 
     return (
-        <>
-            <h1 className='text-2xl font-bold'>Profile</h1>
 
-            <h1 className='text-xl'>{user.username}</h1>
+        <div className='text-lg bg-green-200 p-6 flex flex-col m-10 rounded-lg'>
 
-            <button className='bg-green-500 hover:bg-transparent' onClick={handleEdit}>Edit</button>
+            <h1 className='text-4xl font-bold m-1'>Profile</h1>
 
-            <button className='bg-green-500 hover:bg-transparent' onClick={handleDelete}>DELETE ACCOUNT</button>
-        </>
+            <h1 className='m-1'>{user.username}</h1>
+
+            <h3 className='m-1'>{user.email}</h3>
+
+            <p>CookBook Size: {user.recipes.length}</p>
+
+            <button className=' bg-white text-green-500 rounded-lg hover:text-black p-1 m-2 mt-3 ' onClick={handleEdit}>EDIT</button>
+
+            <button className=' bg-white text-red-500 rounded-lg hover:text-black p-1 m-2 ' onClick={handleDelete}>DELETE ACCOUNT</button>
+
+        </div>
+
     )
 }
 

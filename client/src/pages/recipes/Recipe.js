@@ -1,4 +1,5 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
@@ -7,20 +8,42 @@ import { date as yupDate } from 'yup'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../../App'
 import RecipeForm from '../recipes/RecipeForm'
+import Nav from '../../components/Nav'
 
 
-function Recipe({name, steps, ingredients, cookbooks}) {
+function Recipe({id, name, steps, ingredients, cookbooks}) {
+	const { user } = useContext(UserContext)
     const route = useParams()
     const [editMode, setEditMode] = useState(false)
+	const [currentRecipe, setCurrentRecipe] = useState({})
     const nav = useNavigate()
+
 
     const handleEdit = () => {
         setEditMode(!editMode)
     }
 
     const handleDelete = () => {
-        console.log('DELETE TRIGGERED')
-    }
+		fetch(`/recipes/${route.id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+		.then((res) => {
+			if (res.ok) {
+
+
+				nav('/cookbooks')
+				toast.success("Deleted")
+			} else {
+				return res
+					.json()
+					.then((errorObj) => toast.error(errorObj.message))
+			}
+		})
+		.catch((error) => console.error('Error:', error))
+}
 
     const recipeSchema = object({
         name: string(),
@@ -63,6 +86,30 @@ function Recipe({name, steps, ingredients, cookbooks}) {
 	})
 
 
+	useEffect(() => {
+		if (route.id) {
+			fetch(`/recipes/${route.id}`)
+			.then((res) => {
+				if (res.ok) {
+					res.json()
+						.then((data) => {
+							setCurrentRecipe(data)
+						})
+						.then(() => {
+							
+						})
+				} else if (res.status === 422) {
+					toast.error('Invalid Login')
+				} else {
+					return res
+						.json()
+						.then((errorObj) => toast.error(errorObj.Error))}
+			})
+		}
+
+	}, [])
+
+
 
 
 
@@ -74,8 +121,8 @@ function Recipe({name, steps, ingredients, cookbooks}) {
         
             <div>
                 <button onClick={handleEdit}>Edit</button>
-                <p>{name}</p>
-                <p>{steps}</p>
+                <p>{currentRecipe.name}</p>
+                <p>{currentRecipe.steps}</p>
                 {
                     editMode ? 
                     
@@ -88,7 +135,7 @@ function Recipe({name, steps, ingredients, cookbooks}) {
 							onBlur={formik.handleBlur}
 							value={formik.values.name}
 							id = 'name'
-							placeholder='Existing Name here'
+							placeholder={currentRecipe.name}
 						/>
                         {formik.errors.name && formik.touched.name && (
 							<div className='error-message show'>{formik.errors.name}</div>
@@ -102,13 +149,13 @@ function Recipe({name, steps, ingredients, cookbooks}) {
 							onBlur={formik.handleBlur}
 							value={formik.values.steps}
 							id = 'steps'
-							placeholder='Existing Steps here'
+							placeholder={currentRecipe.steps}
 						/>
                         {formik.errors.steps && formik.touched.steps && (
 							<div className='error-message show'>{formik.errors.steps}</div>
 						)}
 
-                        <label htmlFor='ingredients'>Ingredients</label>
+                        {/* <label htmlFor='ingredients'>Ingredients</label>
                         <input
 							type='text'
 							name='ingredients'
@@ -116,11 +163,11 @@ function Recipe({name, steps, ingredients, cookbooks}) {
 							onBlur={formik.handleBlur}
 							value={formik.values.ingredients}
 							id = 'steps'
-							placeholder='Existing Steps here'
+							placeholder={currentRecipe.steps}
 						/>
                         {formik.errors.ingredients && formik.touched.ingredients && (
 							<div className='error-message show'>{formik.errors.ingredients}</div>
-						)}
+						)} */}
 
                         <button>
                             Add Recipe
@@ -136,12 +183,21 @@ function Recipe({name, steps, ingredients, cookbooks}) {
 
             : 
 
-            <div className='p-4'>
-                <button className='text-lg bg-green-500 hover:bg-transparent' onClick={handleDelete}>Delete</button>
-                <p className='text-2xl'>{name}</p>
-                <p className='text-lg'>{steps}</p>
-                
-            </div>
+			<NavLink to={`/recipes/${id}`}>
+
+				<div className='p-4' >
+
+					<div className='flex flex-row justify-between'>
+
+						<p className='text-3xl'>{name}</p>
+
+					</div>
+
+					<p className='text-lg'>{steps}</p>
+					
+				</div>
+
+			</NavLink>
 
         }
         
