@@ -157,7 +157,7 @@ class Recipes(Resource):
 api.add_resource(Recipes, '/recipes')
 
 class RecipeById(Resource):
-    def get(self):
+    def get(self,id):
         try:
             recipe = recipe_schema.dump(Recipe.query.get(id))
             if recipe:

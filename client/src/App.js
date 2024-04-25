@@ -41,7 +41,7 @@ function App() {
 
     <UserContext.Provider value={{user, login, logout}}>
 
-      <main className='font-mono p-6'>
+      <main className='h-screen cormorant-garamond p-6  flex-col min-h-screen"'>
         <Toaster
           position='top-center'
           containerClassName='toaster-style'
