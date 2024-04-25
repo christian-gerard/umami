@@ -1,19 +1,32 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useContext, useState } from 'react'
+import { UserContext } from '../App'
 
 function Nav () {
+    const {user, logout} = useContext(UserContext)
+    const [viewMenu, setViewMenu] = useState(false)
 
+    const handleMenu = () => {
+        setViewMenu(!viewMenu)
+    }
     return (
-        <>
-            <h1>
-                UMAMI || 旨味
-            </h1>
+        <div onClick={handleMenu} className='text-6xl'>
+            <h1 className='hover:text-green-500' >UMAMI</h1>
 
-            <NavLink id='link' to='/recipes' className='nav-link' > Recipes </NavLink>
-            <NavLink id='link' to='/findrecipes' className='nav-link' > Find Recipe </NavLink>
-            <NavLink id='link' to='/' className='nav-link' > Logout </NavLink>
-                
+            {
+            user && viewMenu ? 
+            <div className='text-2xl flex flex-col '>
+                <NavLink id='link' to='/cookbook' className='hover:text-green-500' > Cookbook </NavLink>
+                <NavLink id='link' to='/findrecipes' className='hover:text-green-500' > Find Recipe </NavLink>
+                <NavLink id='link' to='/profile' className='hover:text-green-500'  > Profile </NavLink>
+                <NavLink id='link' to='/' className='hover:text-green-500' onClick={logout} > Logout </NavLink>
+            </div>
+            :
+                <></>
+         }
 
-        </>
+
+        </div>
     )
 }
 
