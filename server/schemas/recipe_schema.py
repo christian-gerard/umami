@@ -5,7 +5,7 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
         model = Recipe
         load_instance = True
         ordered = True
-        partial = ('id',)
+        partial = ('id', 'user')
 
     name = fields.String(
         validate=validate.Length(

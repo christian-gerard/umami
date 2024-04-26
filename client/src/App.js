@@ -24,6 +24,10 @@ function App() {
 			throw err
   }}
 
+  const updateRecipes = (newRecipes) => {
+    setUser({ ...user, recipes: newRecipes })
+  }
+
   useEffect(() => {
     fetch('/me')
     .then(resp => {
@@ -39,7 +43,7 @@ function App() {
 
   return (
 
-    <UserContext.Provider value={{user, login, logout}}>
+    <UserContext.Provider value={{user, login, logout, updateRecipes}}>
 
       <main className='h-screen cormorant-garamond p-6  flex-col min-h-screen"'>
         <Toaster
