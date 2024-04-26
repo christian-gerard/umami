@@ -22,7 +22,7 @@ class User(db.Model, SerializerMixin):
     cookbooks = db.relationship('Cookbook', back_populates='user')
 
     # # # # # Serialize
-    serialize_rules=('-recipes','-cookbooks')
+    serialize_rules=()
 
     # # # # # Representation
     def __repr__(self):
