@@ -40,19 +40,19 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
 
-    # recipes = fields.Nested(
-    #     "RecipeSchema",
-    #     only=('title', 'body', 'date', 'id'),
-    #     exclude=('user',),
-    #     many=True
-    # )
 
-    # cookbooks = fields.Nested(
-    #     "CookbookSchema",
-    #     only=('title', 'body', 'date', 'id'),
-    #     exclude=('user',),
-    #     many=True
-    # )
+
+    recipes = fields.Nested(
+        "RecipeSchema",
+        exclude=('user',),
+        many=True
+    )
+
+    cookbooks = fields.Nested(
+        "CookbookSchema",
+        exclude=('user', 'recipe'),
+        many=True
+    )
 
     def load(self, data, instance=None, *, partial=False, **kwargs):
         # Load the instance using Marshmallow's default behavior
