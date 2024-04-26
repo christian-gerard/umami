@@ -1,6 +1,6 @@
 import Recipe from './Recipe'
 import { useNavigate } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../App'
 import { useFormik } from 'formik'
 import toast from 'react-hot-toast'
@@ -71,6 +71,12 @@ function Cookbook() {
 		}
 	})
 
+    useEffect(() => {
+        setPages((pages) => Math.ceil(user.recipes.length / 10))
+
+
+    }, [])
+
     return (
         <div className='p-6 mt-6 '>
             <div className='flex flex-col flex-grow  '>
@@ -80,7 +86,12 @@ function Cookbook() {
                     <button className='text-2xl bg-pink-200 hover:bg-transparent rounded-lg p-1 ' onClick={newRecipe}>New Recipe +</button>
                 </div>
 
-                {user ? user.recipes.slice(startIndex, endIndex).map((recipe) => <Recipe key={recipe.id} {...recipe} />) : <h1>LOADING</h1>}
+                <div className='bg-shittake overflow-y-auto h-80'>
+
+                    {user ? user.recipes.slice(startIndex, endIndex).map((recipe) => <Recipe key={recipe.id} {...recipe} />) : <h1>LOADING</h1>}
+
+                </div>
+
 
                 <div className=' text-xl fixed bottom-10 left-0 right-0 flex justify-center'>
                     <button  className='bg-green-100' onClick={handlePrev}>Prev</button>
@@ -92,7 +103,7 @@ function Cookbook() {
 
             {
                 recipeForm ?
-                <div className='fixed inset-0 flex justify-center items-center transition-colors '> 
+                <div className='fixed inset-0 flex justify-center items-center transition-colors backdrop-blur'> 
 
                     <form onSubmit={formik.handleSubmit} className='bg-white p-12  flex flex-col text-2xl rounded-xl border-2 border-shittake'>
                     <button className='bg-shittake text-white rounded-xl 'type='button' onClick={newRecipe} >X</button>
