@@ -33,7 +33,6 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 		.then((res) => {
 			if (res.ok) {
 
-
 				nav('/cookbooks')
 				toast.success("Deleted")
 			} else {
@@ -59,29 +58,27 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 		initialValues,
 		validationSchema: recipeSchema,
 		onSubmit: (formData) => {
-			fetch('/entries', {
-				method: 'POST',
+			console.log(formData)
+
+			fetch(`/recipes/${currentRecipe.id}`, {
+				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					name: formData.name
-				})
+				body: JSON.stringify(formData)
+			}).then((res) => {
+
+				if (res.ok) {
+					return res.json().then((data) => {
+						nav('/cookbook')
+						toast.success("Recipe Updated")
+					})
+				} else {
+					return res
+						.json()
+						.then((errorObj) => toast.error(errorObj.message))
+				}
 			})
-				.then((res) => {
-					if (res.ok) {
-						return res.json().then((data) => {
-
-
-							nav('/cookbook')
-							toast.success("Entry Submited")
-						})
-					} else {
-						return res
-							.json()
-							.then((errorObj) => toast.error(errorObj.message))
-					}
-				})
 		}
 	})
 
@@ -107,10 +104,7 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 			})
 		}
 
-	}, [])
-
-
-
+	}, [route.id])
 
 
 
@@ -120,59 +114,68 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
         { route.id ? 
         
             <div>
-                <button onClick={handleEdit}>Edit</button>
-                <p>{currentRecipe.name}</p>
-                <p>{currentRecipe.steps}</p>
+				<div>
+					<button className='bg-shittake rounded-lg p-2 text-white' onClick={handleEdit}>Edit</button>
+					<button className='bg-white rounded-lg p-2 text-shittake ' onClick={handleDelete}>Delete</button>
+					<p className='text-4xl'>{currentRecipe.name}</p>
+					<p className='text-lg'>{currentRecipe.steps}</p>
+
+				</div>
                 {
                     editMode ? 
-                    
-                    <form>
-                        <label htmlFor='name'>Name</label>
-                        <input
-							type='text'
-							name='name'
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							value={formik.values.name}
-							id = 'name'
-							placeholder={currentRecipe.name}
-						/>
-                        {formik.errors.name && formik.touched.name && (
-							<div className='error-message show'>{formik.errors.name}</div>
-						)}
+                    <div className='fixed inset-0 flex justify-center items-center transition-colors backdrop-blur'> 
 
-                        <label htmlFor='steps'>Steps</label>
-                        <input
-							type='text'
-							name='steps'
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							value={formik.values.steps}
-							id = 'steps'
-							placeholder={currentRecipe.steps}
-						/>
-                        {formik.errors.steps && formik.touched.steps && (
-							<div className='error-message show'>{formik.errors.steps}</div>
-						)}
+						<form className=' bg-white p-12  flex flex-col text-lg rounded-xl border-2 border-shittake' onSubmit={formik.handleSubmit}>
+						<button className='bg-shittake text-white rounded-xl 'type='button' onClick={() => setEditMode(!editMode)} >X</button>
+							<label htmlFor='name'>Name</label>
+							<input
+								type='text'
+								name='name'
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								value={formik.values.name}
+								id = 'name'
+								placeholder={currentRecipe.name}
+							/>
+							{formik.errors.name && formik.touched.name && (
+								<div className='error-message show'>{formik.errors.name}</div>
+							)}
 
-                        {/* <label htmlFor='ingredients'>Ingredients</label>
-                        <input
-							type='text'
-							name='ingredients'
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							value={formik.values.ingredients}
-							id = 'steps'
-							placeholder={currentRecipe.steps}
-						/>
-                        {formik.errors.ingredients && formik.touched.ingredients && (
-							<div className='error-message show'>{formik.errors.ingredients}</div>
-						)} */}
+							<label htmlFor='steps'>Steps</label>
+							<input
+								type='text'
+								name='steps'
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								value={formik.values.steps}
+								id = 'steps'
+								placeholder={currentRecipe.steps}
+							/>
+							{formik.errors.steps && formik.touched.steps && (
+								<div className='error-message show'>{formik.errors.steps}</div>
+							)}
 
-                        <button>
-                            Add Recipe
-                        </button>
-                    </form>
+							{/* <label htmlFor='ingredients'>Ingredients</label>
+							<input
+								type='text'
+								name='ingredients'
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								value={formik.values.ingredients}
+								id = 'steps'
+								placeholder={currentRecipe.steps}
+							/>
+							{formik.errors.ingredients && formik.touched.ingredients && (
+								<div className='error-message show'>{formik.errors.ingredients}</div>
+							)} */}
+
+							<button>
+								Update Recipe
+							</button>
+						</form>
+
+
+					</div>
                     
                     : 
                     
@@ -194,6 +197,8 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 					</div>
 
 					<p className='text-lg'>{steps}</p>
+
+					{/* <p className='text-lg'>{ingredients ? ingredients.map((ingredient) => <p>{ingredient.name}</p>) : <p>Loading...</p>}</p> */}
 					
 				</div>
 

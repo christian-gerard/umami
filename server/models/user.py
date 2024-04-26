@@ -18,8 +18,8 @@ class User(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
 
     # # # # # Relationship
-    recipes = db.relationship('Recipe', back_populates='user')
-    cookbooks = db.relationship('Cookbook', back_populates='user')
+    recipes = db.relationship('Recipe', back_populates='user', cascade='all, delete')
+    cookbooks = db.relationship('Cookbook', back_populates='user', cascade='all, delete-orphan')
 
     # # # # # Serialize
     serialize_rules=()

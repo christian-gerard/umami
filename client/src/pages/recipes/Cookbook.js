@@ -72,10 +72,10 @@ function Cookbook() {
 	})
 
     useEffect(() => {
-        setPages((pages) => Math.ceil(user.recipes.length / 10))
+        user ? setPages((pages) => Math.ceil(user.recipes.length / 10)) : <h1>Loading</h1>
 
 
-    }, [])
+    }, [user])
 
     return (
         <div className='p-6 mt-6 '>
@@ -86,7 +86,7 @@ function Cookbook() {
                     <button className='text-2xl bg-pink-200 hover:bg-transparent rounded-lg p-1 ' onClick={newRecipe}>New Recipe +</button>
                 </div>
 
-                <div className='bg-shittake overflow-y-auto h-80'>
+                <div className='bg-shittake '>
 
                     {user ? user.recipes.slice(startIndex, endIndex).map((recipe) => <Recipe key={recipe.id} {...recipe} />) : <h1>LOADING</h1>}
 
@@ -105,7 +105,7 @@ function Cookbook() {
                 recipeForm ?
                 <div className='fixed inset-0 flex justify-center items-center transition-colors backdrop-blur'> 
 
-                    <form onSubmit={formik.handleSubmit} className='bg-white p-12  flex flex-col text-2xl rounded-xl border-2 border-shittake'>
+                    <form onSubmit={formik.handleSubmit} className='bg-white p-12  flex flex-col text-lg rounded-xl border-2 border-shittake'>
                     <button className='bg-shittake text-white rounded-xl 'type='button' onClick={newRecipe} >X</button>
                     <label htmlFor='name'>Name</label>
                     <input
