@@ -101,7 +101,11 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 					res.json()
 					.then((data) => {
 						setCurrentRecipe(data)
-						formik.setValues({name: currentRecipe.name, steps: currentRecipe.steps, ingredients: currentRecipe.ingredients})
+						formik.setValues({
+							name: currentRecipe.name, 
+							steps: currentRecipe.steps, 
+							ingredients: currentRecipe.ingredients
+						})
 					})
 					.then(() => {
 						
@@ -212,18 +216,24 @@ function Recipe({id, name, steps, ingredients, cookbooks}) {
 											<div key={index}>
 												<input 
 													name={`name.${index}`}
+													onChange={formik.handleChange}
+													onBlur={formik.handleBlur}
 													placeholder={ingredient.food.name}
 													value={formik.values.ingredients[index].food.name}
 													className='border rounded-lg p-1 m-1 '
 												/>
 												<input 
 													name={`serving.${index}`}
-													placeholder={ingredient.amount}
+													onChange={formik.handleChange}
+													onBlur={formik.handleBlur}
+													placeholder={formik.values.ingredients[index].amount}
 													className='border rounded-lg p-1 m-1 '
 												/>
 												<input 
 													name={`measurement.${index}`}
-													placeholder={ingredient.measurement_unit}
+													onChange={formik.handleChange}
+													onBlur={formik.handleBlur}
+													placeholder={formik.values.ingredients[index].measurement_unit}
 													className='border rounded-lg p-1 m-1 '
 												/>
 											</div>
