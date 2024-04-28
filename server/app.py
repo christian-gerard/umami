@@ -172,8 +172,9 @@ class RecipeById(Resource):
     def patch(self,id):
         try:
             og = Recipe.query.filter(Recipe.id == id).first()
+            data = request.get_json()
+
             if og:
-                data = request.get_json()
                 updated_recipe = recipe_schema.load(data, instance=og, partial=True)
                 db.session.commit()
                 return recipe_schema.dump(updated_recipe), 200

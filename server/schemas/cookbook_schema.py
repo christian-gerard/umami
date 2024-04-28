@@ -13,6 +13,7 @@ class CookbookSchema(ma.SQLAlchemyAutoSchema):
             max=20,
             error="Name must not be more than 20 characters")
         )
+    
     user_id = fields.Integer(required=True)
     recipe_id = fields.Integer(required=True)
     created_at = fields.DateTime()

@@ -115,7 +115,7 @@ with app.app_context():
     try:
         ingredients = []
         for _ in range(5):
-            ingredient = Ingredient(amount=10, measurement_unit='cups', food_id=random.randint(1,3), recipe_id=random.randint(1,5) )
+            ingredient = Ingredient(amount=10, measurement_unit='cups', food_id=random.randint(1,3), recipe_id=random.randint(1,2) )
             ingredients.append(ingredient)
         db.session.add_all(ingredients)
         db.session.commit()
