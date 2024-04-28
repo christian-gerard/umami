@@ -22,7 +22,7 @@ class Recipe(db.Model, SerializerMixin):
     ingredients = db.relationship('Ingredient', back_populates='recipe', cascade='all, delete-orphan')
 
     # # # # # Serialize
-    serialize_rules=('-user','-cookbooks','-ingredients')
+    serialize_rules=('-user','-cookbooks')
 
     # # # # # Representation
     def __repr__(self):
