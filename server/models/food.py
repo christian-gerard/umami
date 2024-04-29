@@ -10,7 +10,9 @@ class Food(db.Model, SerializerMixin):
 
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(100))
+    
+    # ADD UNIQUE CONSTRAINT TO 'NAME'
+    name = db.Column(db.String(100) )
     description = db.Column(db.String)
     type_id = db.Column(db.Integer)
 
