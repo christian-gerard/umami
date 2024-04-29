@@ -21,6 +21,7 @@ class Ingredient(db.Model, SerializerMixin):
 
     # # # # # Serialize
     serialize_rules=('-food','-recipe')
+    
     # # # # # Representation
     def __repr__(self):
         return f""" 

@@ -19,7 +19,6 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
             )
     )
 
-
     food_id = fields.Integer(required=True)
     recipe_id = fields.Integer(required=True)
 

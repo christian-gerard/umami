@@ -1,11 +1,11 @@
-from . import ma, fields, validate, validates, Recipe, datetime
+from . import ma, fields, validate, validates, Recipe, datetime, ingredient_schema
 
 class RecipeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Recipe
         load_instance = True
         ordered = True
-        partial = ('id',)
+        partial = ('id', 'user')
 
     name = fields.String(
         validate=validate.Length(
@@ -27,7 +27,11 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
 
     user = fields.Nested('UserSchema')
     cookbooks = fields.Nested('CookbookSchema')
-    ingredients = fields.Nested('IngredientSchema')
+    ingredients = fields.Nested(
+        'IngredientSchema',
+        exclude=('recipe',),
+        many=True
+    )
 
 recipe_schema = RecipeSchema()
 recipes_schema = RecipeSchema(many=True)

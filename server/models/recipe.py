@@ -18,11 +18,11 @@ class Recipe(db.Model, SerializerMixin):
 
     # # # # # Relationship
     user = db.relationship('User', back_populates='recipes')
-    cookbooks = db.relationship('Cookbook', back_populates='recipe')
-    ingredients = db.relationship('Ingredient', back_populates='recipe')
+    cookbooks = db.relationship('Cookbook', back_populates='recipe', cascade='all, delete-orphan')
+    ingredients = db.relationship('Ingredient', back_populates='recipe', cascade='all, delete-orphan')
 
     # # # # # Serialize
-    serialize_rules=('-user','-cookbooks','-ingredients')
+    serialize_rules=('-user','-cookbooks')
 
     # # # # # Representation
     def __repr__(self):

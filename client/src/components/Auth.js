@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { UserContext } from '../App'
+import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import * as Yup from 'yup'
@@ -49,9 +49,7 @@ function Auth() {
 	const { login } = useContext(UserContext)
 	const [isLogin, setIsLogin] = useState(true)
 	const navigate = useNavigate()
-
 	const requestUrl = isLogin ? '/login' : '/signup'
-
 	const formik = useFormik({
 		initialValues,
 		validationSchema: isLogin ? loginSchema : signupSchema,
@@ -83,82 +81,91 @@ function Auth() {
 	})
 
     return (
-        <div className='text-2xl text-white bg-shittake  flex flex-col  w-25 mt-20 p-6 rounded-lg'>
-			<h2>{isLogin ? 'Login':'Sign Up'}</h2>
-			<Formik onSubmit={formik.handleSubmit}>
-				<Form className='flex justify-center flex-col p-1' onSubmit={formik.handleSubmit}>
-					<Field
-						type='text'
-						name='username'
-						placeholder='Username'
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-						value={formik.values.username}
-						className='m-2 text-black'
-						autoComplete='username'
-					/>
-					{formik.errors.username && formik.touched.username && (
-						<div className=''>
-							{formik.errors.username}
-						</div>
-					)}
-					<Field
-						type='password'
-						name='password_hash'
-						placeholder='Password'
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-						value={formik.values.password_hash}
-						className='m-2 text-black'
-						autoComplete='current-password'
-					/>
-					{formik.errors.password_hash &&
-						formik.touched.password_hash && (
-							<div className='error-message show'>
-								{formik.errors.password_hash}
+        <div className='flex flex-col justify-center items-center h-screen  '>
+			<div className='bg-shittake p-6 text-white rounded-xl'>
+
+				<h1 className='text-6xl flex justify-center tracking-[0.25em] p-6'>UMAMI</h1>
+				<h2 className='text-3xl'>{isLogin ? 'Login':'Sign Up'}</h2>
+				<Formik onSubmit={formik.handleSubmit}>
+					<Form className='flex justify-center flex-col p-1' onSubmit={formik.handleSubmit}>
+						<Field
+							type='text'
+							name='username'
+							placeholder='Username'
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							value={formik.values.username}
+							className='m-2 p-2 text-black rounded-lg'
+							autoComplete='username'
+						/>
+						{formik.errors.username && formik.touched.username && (
+							<div className=''>
+								{formik.errors.username}
 							</div>
 						)}
-					{!isLogin && (
-						<>
-							<Field
-								type='password'
-								name='confirmPassword'
-								placeholder='Confirm Password'
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								value={formik.values.confirmPassword}
-								className='m-2 text-black'
-							/>
-							{formik.errors.confirmPassword &&
-								formik.touched.confirmPassword && (
-									<div className='error-message show'>
-										{formik.errors.confirmPassword}
-									</div>
-								)}
-                            <Field
-								type='email'
-								name='email'
-								placeholder='Email'
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								value={formik.values.email}
-								className='m-2 text-black'
-							/>
-							{formik.errors.email &&
-								formik.touched.email && (
-									<div className='error-message show'>
-										{formik.errors.email}
-									</div>
-								)}
-						</>
-					)}
-					<input  type='submit' className='submit bg-blue-500' value={isLogin ? 'Login' : 'Sign up'} />
-		
-					<button type='button' className='text-lg text-blue-200' onClick={() => setIsLogin(!isLogin)} >{isLogin ? "Create New Account" : "Login to Account"}</button>
-					
-				</Form>
-			</Formik>
-		</div>
+						<Field
+							type='password'
+							name='password_hash'
+							placeholder='Password'
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							value={formik.values.password_hash}
+							className='m-2 p-2 text-black rounded-lg'
+							autoComplete='current-password'
+						/>
+						{formik.errors.password_hash &&
+							formik.touched.password_hash && (
+								<div className='error-message show'>
+									{formik.errors.password_hash}
+								</div>
+							)}
+						{!isLogin && (
+							<>
+								<Field
+									type='password'
+									name='confirmPassword'
+									placeholder='Confirm Password'
+									onChange={formik.handleChange}
+									onBlur={formik.handleBlur}
+									value={formik.values.confirmPassword}
+									className='m-2 text-black'
+								/>
+								{formik.errors.confirmPassword &&
+									formik.touched.confirmPassword && (
+										<div className='error-message show'>
+											{formik.errors.confirmPassword}
+										</div>
+									)}
+								<Field
+									type='email'
+									name='email'
+									placeholder='Email'
+									onChange={formik.handleChange}
+									onBlur={formik.handleBlur}
+									value={formik.values.email}
+									className='m-2 text-black'
+								/>
+								{formik.errors.email &&
+									formik.touched.email && (
+										<div className='error-message show'>
+											{formik.errors.email}
+										</div>
+									)}
+							</>
+						)}
+						<input  type='submit' className='submit bg-blue-500' value={isLogin ? 'Login' : 'Sign up'} />
+			
+						<button type='button' className='text-lg text-blue-200' onClick={() => setIsLogin(!isLogin)} >{isLogin ? "Create New Account" : "Login to Account"}</button>
+						
+					</Form>
+				</Formik>
+
+
+			</div>
+
+
+
+			</div>
 
     )
     

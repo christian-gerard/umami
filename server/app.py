@@ -71,10 +71,11 @@ class UserById(Resource):
                 return {"Error": f"Unable to find user with id {id}"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
+        
     @login_required
-    def delete(self,id):
+    def delete(self, id):
         try:
-            user = User.query.get(id)
+            user = db.session.get(User,id)
             if user:
                 db.session.delete(user)
                 db.session.commit()
@@ -171,18 +172,19 @@ class RecipeById(Resource):
     def patch(self,id):
         try:
             og = Recipe.query.filter(Recipe.id == id).first()
+            data = request.get_json()
+
             if og:
-                data = request.get_json()
-                updated_entry = recipe_schema.load(data, instance=og, partial=True)
+                updated_recipe = recipe_schema.load(data, instance=og, partial=True)
                 db.session.commit()
-                return recipe_schema.dump(updated_entry), 200
+                return recipe_schema.dump(updated_recipe), 200
             else:
                 return {"Error": f"Unable to find recipe with id {id}"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
         
     @login_required
-    def delete(self,id):
+    def delete(self, id):
         try:
             recipe = Recipe.query.get(id)
             if recipe:
