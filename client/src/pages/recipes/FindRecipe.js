@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useFormik, FieldArray } from "formik";
+import { useFormik, FieldArray, Formik, Field } from "formik";
 import toast from "react-hot-toast";
 import { object, string, array } from "yup";
 import { useNavigate } from "react-router-dom";
@@ -9,17 +9,21 @@ function FindRecipe() {
 
   const [ingFields, setIngFields] = useState(2);
 
-  const ingredientSearchSchema = object({
-    name: string(),
-    amount: string(),
-    measurement: string(),
-  });
+  const ingredientSearchSchema = object();
 
-  const initialValues = {
-    name: "",
-    amount: "",
-    measurement: "",
-  };
+  const initialValues = [
+    {
+      settings: "aksdjf",
+      erdfw: "kdfjlsdkfj",
+      ingredients: [
+        {
+          name: "Christian",
+          amount: "123",
+          measurement: "1232",
+        },
+      ],
+    },
+  ];
 
   const formik = useFormik({
     initialValues,
@@ -34,19 +38,57 @@ function FindRecipe() {
       <div className="bg-shittake text-white p-6 rounded-lg">
         <h2 className="text-2xl">Enter Ingredients</h2>
 
-        <form className="flex flex-col mt-2" onSubmit={formik.handleSubmit}>
-          <label htmlFor="name">Ingredients</label>
+        <Formik initialValues={initialValues} onSubmit={formik.handleSubmit}>
+          <form className="flex flex-col mt-2">
+            <label htmlFor="name">Ingredients</label>
 
-          <FieldArray name="ingredients" validateOnChange={false}>
-            {(fieldArrayProps) => {
-              console.log(fieldArrayProps);
-            }}
-          </FieldArray>
+            <FieldArray name="ingredients" validateOnChange={false}>
+              {(fieldArrayProps) => {
+                const { push, remove, form } = fieldArrayProps;
+                const { values } = form;
+                const ingredients = values[0].ingredients || [];
 
-          <button className="bg-champagne text-black rounded-lg" type="submit">
-            Search
-          </button>
-        </form>
+                const handleAddIngredient = () => {
+                  push({ name: "", amount: "", measurement: "" });
+                };
+
+                return (
+                  <div>
+                    {ingredients.map((ingredient, index) => (
+                      <div key={index}>
+                        <Field
+                          name={`ingredients[${index}].name`}
+                          placeholder="Name"
+                        />
+                        <Field
+                          name={`ingredients[${index}].amount`}
+                          placeholder="Amount"
+                        />
+                        <Field
+                          name={`ingredients[${index}].measurement`}
+                          placeholder="Measurement"
+                        />
+                        <button type="button" onClick={handleAddIngredient}>
+                          ADD
+                        </button>
+                        <button type="button" onClick={() => remove(index)}>
+                          REMOVE
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
+            </FieldArray>
+
+            <button
+              className="bg-champagne text-black rounded-lg"
+              type="submit"
+            >
+              Search
+            </button>
+          </form>
+        </Formik>
       </div>
 
       <div className="border-1">
