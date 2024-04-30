@@ -23,6 +23,11 @@ function FindRecipe() {
         amount: "",
         measurement: "",
       },
+      {
+        name: "",
+        amount: "",
+        measurement: "",
+      },
     ],
   };
 
@@ -80,7 +85,7 @@ function FindRecipe() {
                               : ""
                           }
                           onChange={formik.handleChange}
-                          className="m-1 p-1 rounded-lg w-[50px]"
+                          className="m-1 p-1 rounded-lg w-[40px]"
                         />
                         <Field
                           name={`ingredients[${index}].measurement`}
@@ -91,7 +96,7 @@ function FindRecipe() {
                               : ""
                           }
                           onChange={formik.handleChange}
-                          className="m-1 p-1 rounded-lg w-[50px]"
+                          className="m-1 p-1 rounded-lg w-[40px]"
                         />
 
                         <button
