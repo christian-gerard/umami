@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { useFormik, FieldArray, Formik, Field } from "formik";
 import toast from "react-hot-toast";
-import { object, string, array } from "yup";
-import { useNavigate } from "react-router-dom";
+import { object, string, array, number } from "yup";
 
 function FindRecipe() {
-  const nav = useNavigate();
-
-  const [ingFields, setIngFields] = useState(2);
-
-  const ingredientSearchSchema = object();
+  const ingredientSearchSchema = object({
+    settings: string(),
+    ingredients: array().of(
+      object({
+        name: string(),
+        amount: number(),
+        measurement: string(),
+      }),
+    ),
+  });
 
   const initialValues = {
-    settings: "aksdjf",
-    erdfw: "kdfjlsdkfj",
+    settings: "",
     ingredients: [
       {
         name: "",
@@ -34,17 +37,16 @@ function FindRecipe() {
   return (
     <div className="p-6 flex flex-row">
       <div className="bg-shittake text-black p-6 rounded-lg">
-        <h2 className="text-2xl">Enter Ingredients</h2>
+        <h2 className="text-2xl text-white">Enter Ingredients</h2>
 
-        <Formik
-          initialValues={initialValues}
-          onSubmit={formik.handleSubmit}
-          className="text-white"
-        >
-          <form className="flex flex-col mt-2" onSubmit={formik.handleSubmit}>
+        <Formik initialValues={initialValues} onSubmit={formik.handleSubmit}>
+          <form
+            className="flex flex-col mt-2 text-white"
+            onSubmit={formik.handleSubmit}
+          >
             <label htmlFor="name">Ingredients</label>
 
-            <FieldArray name="ingredients" validateOnChange={false}>
+            <FieldArray name="ingredients" validateOnChange={true}>
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
@@ -57,7 +59,7 @@ function FindRecipe() {
                 return (
                   <div>
                     {ingredients.map((ingredient, index) => (
-                      <div key={index}>
+                      <div key={index} className="text-black">
                         <Field
                           name={`ingredients[${index}].name`}
                           value={
@@ -97,14 +99,14 @@ function FindRecipe() {
                           onClick={() => remove(index)}
                           className="p-1 m-1 bg-champagne text-black rounded-lg"
                         >
-                          -
+                          −
                         </button>
                         <button
                           type="button"
                           onClick={handleAddIngredient}
                           className="p-1 m-1 bg-champagne text-black rounded-lg"
                         >
-                          +
+                          ➕
                         </button>
                       </div>
                     ))}
