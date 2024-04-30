@@ -71,7 +71,7 @@ class UserById(Resource):
                 return {"Error": f"Unable to find user with id {id}"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
-        
+
     @login_required
     def delete(self, id):
         try:
@@ -143,6 +143,16 @@ class Recipes(Resource):
     def post(self):
         try:
             data = request.get_json()
+            ingredients = ingredients_schema.load(data.get('ingredients'))
+            db.session.add(recipe)
+            db.session.commit()
+            return recipe_schema.dump(recipe), 201
+        except Exception as e:
+            db.session.rollback()
+            return {"Error": str(e)}, 400
+
+        try:
+            data = request.get_json()
             recipe = recipe_schema.load({
                 "name" : data.get("name"),
                 "steps" : data.get("steps"),
@@ -167,7 +177,7 @@ class RecipeById(Resource):
                 return {"Error": "Recipe not found"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
-        
+
     @login_required
     def patch(self,id):
         try:
@@ -182,7 +192,7 @@ class RecipeById(Resource):
                 return {"Error": f"Unable to find recipe with id {id}"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
-        
+
     @login_required
     def delete(self, id):
         try:
@@ -221,8 +231,8 @@ class Signup(Resource):
             # Pass partial on load() method to avoid id requirement
             data = request.get_json()
             new_user = user_schema.load({
-                "username": data.get('username'), 
-                "password_hash": data.get("password_hash"), 
+                "username": data.get('username'),
+                "password_hash": data.get("password_hash"),
                 "email": data.get("email"),
                 "role": data.get("role")
             })
@@ -239,7 +249,7 @@ api.add_resource(Signup, '/signup')
 class Login(Resource):
     def post(self):
         try:
-            
+
             data = request.get_json()
             user = User.query.filter_by(username=data.get('username')).first()
             if user and user.authenticate(data.get('password_hash')):
@@ -275,7 +285,7 @@ class CheckMe(Resource):
             return user_schema.dump(user), 200
         else:
             return {"message": "Please log in"}, 400
-        
+
 api.add_resource(CheckMe, '/me')
 
 
