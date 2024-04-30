@@ -11,19 +11,17 @@ function FindRecipe() {
 
   const ingredientSearchSchema = object();
 
-  const initialValues = [
-    {
-      settings: "aksdjf",
-      erdfw: "kdfjlsdkfj",
-      ingredients: [
-        {
-          name: "Christian",
-          amount: "123",
-          measurement: "1232",
-        },
-      ],
-    },
-  ];
+  const initialValues = {
+    settings: "aksdjf",
+    erdfw: "kdfjlsdkfj",
+    ingredients: [
+      {
+        name: "",
+        amount: "",
+        measurement: "",
+      },
+    ],
+  };
 
   const formik = useFormik({
     initialValues,
@@ -35,18 +33,22 @@ function FindRecipe() {
 
   return (
     <div className="p-6 flex flex-row">
-      <div className="bg-shittake text-white p-6 rounded-lg">
+      <div className="bg-shittake text-black p-6 rounded-lg">
         <h2 className="text-2xl">Enter Ingredients</h2>
 
-        <Formik initialValues={initialValues} onSubmit={formik.handleSubmit}>
-          <form className="flex flex-col mt-2">
+        <Formik
+          initialValues={initialValues}
+          onSubmit={formik.handleSubmit}
+          className="text-white"
+        >
+          <form className="flex flex-col mt-2" onSubmit={formik.handleSubmit}>
             <label htmlFor="name">Ingredients</label>
 
             <FieldArray name="ingredients" validateOnChange={false}>
               {(fieldArrayProps) => {
                 const { push, remove, form } = fieldArrayProps;
                 const { values } = form;
-                const ingredients = values[0].ingredients || [];
+                const ingredients = values.ingredients || [];
 
                 const handleAddIngredient = () => {
                   push({ name: "", amount: "", measurement: "" });
@@ -58,21 +60,51 @@ function FindRecipe() {
                       <div key={index}>
                         <Field
                           name={`ingredients[${index}].name`}
+                          value={
+                            formik.values.ingredients[index]
+                              ? formik.values.ingredients[index].name
+                              : ""
+                          }
+                          onChange={formik.handleChange}
                           placeholder="Name"
+                          className="m-1 p-1 rounded-lg w-[250px]"
                         />
                         <Field
                           name={`ingredients[${index}].amount`}
                           placeholder="Amount"
+                          value={
+                            formik.values.ingredients[index]
+                              ? formik.values.ingredients[index].amount
+                              : ""
+                          }
+                          onChange={formik.handleChange}
+                          className="m-1 p-1 rounded-lg w-[50px]"
                         />
                         <Field
                           name={`ingredients[${index}].measurement`}
                           placeholder="Measurement"
+                          value={
+                            formik.values.ingredients[index]
+                              ? formik.values.ingredients[index].measurement
+                              : ""
+                          }
+                          onChange={formik.handleChange}
+                          className="m-1 p-1 rounded-lg w-[50px]"
                         />
-                        <button type="button" onClick={handleAddIngredient}>
-                          ADD
+
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="p-1 m-1 bg-champagne text-black rounded-lg"
+                        >
+                          -
                         </button>
-                        <button type="button" onClick={() => remove(index)}>
-                          REMOVE
+                        <button
+                          type="button"
+                          onClick={handleAddIngredient}
+                          className="p-1 m-1 bg-champagne text-black rounded-lg"
+                        >
+                          +
                         </button>
                       </div>
                     ))}
