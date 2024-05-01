@@ -8,7 +8,7 @@ import { object, string, array, number } from "yup";
 
 function Cookbook() {
   const nav = useNavigate();
-  const { user } = useContext(UserContext);
+  const { user, updateRecipes } = useContext(UserContext);
   const [pages, setPages] = useState(1);
   const [recipeForm, setRecipeForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +38,7 @@ function Cookbook() {
       object({
         name: string(),
         amount: number(),
-        measurement: string(),
+        measurement_unit: string(),
       }),
     ),
   });
@@ -50,13 +50,8 @@ function Cookbook() {
       {
         name: "",
         amount: "",
-        measurement: "",
-      },
-      {
-        name: "",
-        amount: "",
-        measurement: "",
-      },
+        measurement_unit: "",
+      }
     ],
   };
 
@@ -73,6 +68,7 @@ function Cookbook() {
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
+            updateRecipes([...user.recipes, data])
             newRecipe();
             nav("/cookbook");
             toast.success("Recipe Created");
@@ -97,23 +93,7 @@ function Cookbook() {
       <div className="flex flex-col flex-grow ">
         <div className="flex flex-row justify-between">
           <h1 className="text-5xl tracking-widest">My Cookbook</h1>
-          <select className="border border-black p-2" placeholder="Filter">
-            <option>Choose Type</option>
-            <option>Breakfast</option>
-            <option>Brunch</option>
-            <option>Lunch</option>
-            <option>Dinner</option>
-            <option>Snack</option>
-            <option>Dessert</option>
-            <option>Baking</option>
-          </select>
-          <select className="border border-black p-2" placeholder="Filter">
-            <option>Sort By</option>
-            <option>Name</option>
-            <option>Type</option>
-            <option>Name</option>
-            <option>Name</option>
-          </select>
+    
           <button
             className="text-lg bg-shittake hover:text-black rounded-lg p-2 text-white "
             onClick={newRecipe}
@@ -142,7 +122,7 @@ function Cookbook() {
           &nbsp;
           <button className="bg-champagne p-1 rounded-lg" onClick={handleNext}>
             Next
-          </button>
+          </button> 
         </div>
       </div>
 
@@ -188,7 +168,7 @@ function Cookbook() {
                   const ingredients = values.ingredients || [];
 
                   const handleAddIngredient = () => {
-                    push({ name: "", amount: "", measurement: "" });
+                    push({ name: "", amount: "", measurement_unit: "" });
                   };
 
                   return (
@@ -218,11 +198,11 @@ function Cookbook() {
                             className="m-1 p-1 rounded-lg w-[40px]"
                           />
                           <Field
-                            name={`ingredients[${index}].measurement`}
+                            name={`ingredients[${index}].measurement_unit`}
                             placeholder="Measurement"
                             value={
                               formik.values.ingredients[index]
-                                ? formik.values.ingredients[index].measurement
+                                ? formik.values.ingredients[index].measurement_unit
                                 : ""
                             }
                             onChange={formik.handleChange}
