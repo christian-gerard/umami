@@ -231,17 +231,23 @@ function Cookbook() {
               </FieldArray>
             </div>
 
-            <div className="flex flex-col w-[600px]">
+            <div className="flex flex-col w-[600px] align-top">
               <label htmlFor="steps">Instructions</label>
+              <p className='text-left align-top h-[500px] w-[400px] resize-none overflow-auto'> 
+
               <input
                 type="text"
                 name="steps"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.steps}
-                className="border rounded-lg h-[500px]"
+                className="border rounded-lg h-[500px] align-top resize-none overflow-auto"
                 placeholder="Existing Steps here"
-              />
+              /> 
+
+              </p>
+              
+
               {formik.errors.steps && formik.touched.steps && (
                 <div className="error-message show">{formik.errors.steps}</div>
               )}
