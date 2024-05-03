@@ -4,10 +4,11 @@ from config import flask_bcrypt
 from datetime import datetime
 import re
 
+
 class Ingredient(db.Model, SerializerMixin):
     # # # # # Table Name
     __tablename__ = 'ingredients'
-
+    __table_args__ = (db.UniqueConstraint('food_id', 'recipe_id', name='ingredient_recipe_uc'),)
     # # # # # Attribute
     id = db.Column(db.Integer, primary_key = True)
     amount = db.Column(db.Integer, nullable=False)
