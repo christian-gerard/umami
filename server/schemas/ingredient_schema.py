@@ -7,11 +7,7 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
         ordered = True
         partial = ('id',)
 
-    amount = fields.String(
-        validate=validate.Length(
-            max=50,
-            error="Title must be less than 50 characters")
-        )
+    amount = fields.Integer()
 
     measurement_unit = fields.String(
         require=True, 

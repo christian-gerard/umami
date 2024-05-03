@@ -139,19 +139,13 @@ class Recipes(Resource):
             return recipes, 200
         except Exception as e:
             return {"Error": str(e)}, 400
+        
+
+
     @login_required
     def post(self):
         try:
-            data = request.get_json()
-            ingredients = ingredients_schema.load(data.get('ingredients'))
-            db.session.add(recipe)
-            db.session.commit()
-            return recipe_schema.dump(recipe), 201
-        except Exception as e:
-            db.session.rollback()
-            return {"Error": str(e)}, 400
 
-        try:
             data = request.get_json()
             recipe = recipe_schema.load({
                 "name" : data.get("name"),
@@ -160,10 +154,51 @@ class Recipes(Resource):
             })
             db.session.add(recipe)
             db.session.commit()
+
+            # Pull Ingredients Data
+            ingredients = data.get('ingredients')
+
+            # Find or Create ingredient
+            ## Loop through ingredients
+            for ingredient in ingredients:
+                if (food_obj := Food.query.filter_by(name=ingredient['name']).first()):
+                    # INSTANTIATE INGEDIENT OBJECT
+                    new_ingredient = {
+                        "measurement_unit": ingredient['measurement_unit'],
+                        "recipe_id": recipe.id,
+                        "food_id": food_obj.id,
+                        "amount": ingredient.get('amount')
+                    }
+
+                    ingredient_obj = ingredient_schema.load(new_ingredient)
+
+                    db.session.add(ingredient_obj)
+
+
+                    #################
+                else:
+
+
+                    return {"Error": f"{ingredient.name} is not a listed food item"}, 400
+                    
+            db.session.commit()
             return recipe_schema.dump(recipe), 201
+            
         except Exception as e:
             db.session.rollback()
             return {"Error": str(e)}, 400
+
+
+
+\
+
+
+
+
+
+
+
+
 
 api.add_resource(Recipes, '/recipes')
 
