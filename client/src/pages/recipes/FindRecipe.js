@@ -7,7 +7,9 @@ import {OpenAI} from 'openai'
 
 
 
-const API_KEY = 'sk-proj-6HhzpbwE7c99W72OJ2pfT3BlbkFJeej945KkuCu6sDyKC5ey'
+const API_KEY = process.env.REACT_APP_OPENAI_API_KEY
+
+console.log(API_KEY)
 
 const openai = new OpenAI({
 
