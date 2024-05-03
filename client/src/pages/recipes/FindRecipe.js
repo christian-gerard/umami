@@ -188,10 +188,10 @@ function FindRecipe() {
             </h1>
             <div>
               {aiRecipes.ingredients.map((ingredient) => 
-              <div className='flex flex-row m-2'> 
-                <h3 className='text-xl'>{ingredient.name}</h3> 
-                <p>{ingredient.amount}</p> 
-                <p>{ingredient.measurement_unit}</p> 
+              <div className='flex flex-row m-2 '> 
+                <h3 className='text-xl'>{ingredient.name} ||</h3> 
+                <p className="text-xl mr-4 ml-4">  {ingredient.amount}  </p> 
+                <p className="text-lg ">{ingredient.measurement_unit}</p> 
               </div>) }
             </div>
             <div>
