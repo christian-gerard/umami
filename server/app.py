@@ -190,9 +190,6 @@ class Recipes(Resource):
 
 
 
-\
-
-
 
 
 
@@ -212,19 +209,81 @@ class RecipeById(Resource):
                 return {"Error": "Recipe not found"}, 404
         except Exception as e:
             return {"Error": str(e)}, 400
+            
 
     @login_required
     def patch(self,id):
         try:
-            og = Recipe.query.filter(Recipe.id == id).first()
+            # INIT DATA
             data = request.get_json()
+            ingredients = data.get('ingredients')
+            recipe = Recipe.query.filter(Recipe.id == id).first()
 
-            if og:
-                updated_recipe = recipe_schema.load(data, instance=og, partial=True)
+
+
+
+            # PATCH RECIPE
+            new_recipe = {
+                "name" : data.get("name"),
+                "steps" : data.get("steps"),
+                "user_id" : session.get("user_id")
+            }
+            if recipe:
+                updated_recipe = recipe_schema.load(new_recipe, instance=recipe, partial=True)
+                db.session.add(updated_recipe)
                 db.session.commit()
-                return recipe_schema.dump(updated_recipe), 200
             else:
-                return {"Error": f"Unable to find recipe with id {id}"}, 404
+                return {"ERROR": str(e)}, 400
+
+
+
+            #PATCH INGREDIENTS
+            # Init all existing ingredients
+            current_ingredients = Ingredient.query.filter_by(recipe_id=recipe.id).all()
+            # delete old ingredients
+
+            for i in current_ingredients:
+                db.session.delete(i)
+
+            db.session.commit()
+
+
+            for ingredient in ingredients:
+                if (food_obj := Food.query.filter_by(name=ingredient['name']).first()):
+                    
+
+                    # does the ingredient exist
+                   
+                        # INSTANTIATE INGEDIENT OBJECT      
+                        new_ingredient = {
+                            "measurement_unit": ingredient['measurement_unit'],
+                            "recipe_id": recipe.id,
+                            "food_id": food_obj.id,
+                            "amount": ingredient['amount']
+                        }
+
+                        updated_ingredient = ingredient_schema.load(new_ingredient)
+                        db.session.add(updated_ingredient)
+                        
+                else:
+                    return {"Error": f"{ingredient['name']} is not a valid ingredient"}
+                
+            db.session.commit()
+
+            return recipe_schema.dump(updated_recipe), 200
+
+  
+
+
+
+
+
+
+
+
+
+
+
         except Exception as e:
             return {"Error": str(e)}, 400
 
