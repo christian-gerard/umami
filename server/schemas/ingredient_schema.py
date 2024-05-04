@@ -7,6 +7,7 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
         ordered = True
         partial = ('id',)
 
+    
     amount = fields.Integer()
 
     measurement_unit = fields.String(

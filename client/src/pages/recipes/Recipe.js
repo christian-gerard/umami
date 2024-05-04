@@ -71,6 +71,7 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
     initialValues,
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
+      console.log(formData)
       fetch(`/recipes/${currentRecipe.id}`, {
         method: "PATCH",
         headers: {
@@ -78,11 +79,11 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
         },
         body: JSON.stringify(formData),
       }).then((res) => {
-        console.log(res);
         if (res.ok) {
           return res.json().then((data) => {
-            // const updatedRecipes = user.recipes.map((recipe) => recipe.id === currentRecipe.id ? data : recipe)
-            // updateRecipes(updatedRecipes)
+            console.log(data)
+            const updatedRecipes = user.recipes.map((recipe) => recipe.id === currentRecipe.id ? data : recipe)
+            updateRecipes(updatedRecipes)
             nav("/cookbook");
             toast.success("Recipe Updated");
           });
@@ -100,14 +101,18 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
           res
             .json()
             .then((data) => {
+              console.log(data)
               setCurrentRecipe(data);
               formik.setValues({
-                name: currentRecipe.name,
-                steps: currentRecipe.steps,
-                ingredients: currentRecipe.ingredients,
+                name: data.name,
+                steps: data.steps,
+                ingredients: data.ingredients.map((ingredient) => ({
+                  name: ingredient.food.name,
+                  amount: ingredient.amount,
+                  measurement_unit: ingredient.measurement_unit
+                }))
               });
             })
-            .then(() => {});
         } else if (res.status === 422) {
           toast.error("Invalid Login");
         } else {
@@ -115,7 +120,7 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
         }
       });
     }
-  }, [editMode]);
+  }, [route.id, editMode]);
 
 
   return (
@@ -253,16 +258,16 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                               <button
                                 type="button"
                                 onClick={() => remove(index)}
-                                className="p-1 m-1 bg-champagne text-black rounded-lg"
+                                className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                               >
                                 −
                               </button>
                               <button
                                 type="button"
                                 onClick={handleAddIngredient}
-                                className="p-1 m-1 bg-champagne text-black rounded-lg"
+                                className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                               >
-                                ➕
+                                +
                               </button>
                             </div>
                           ))}
@@ -271,7 +276,6 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                     }}
                   </FieldArray>
 
-                  <button type="button">Add Ingredient Field +</button>
 
                   <button
                     className="bg-shittake rounded-lg text-white "
@@ -303,16 +307,7 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                 {ingredients ? (
                   <>
                     <p>Ingredients: {ingredients.length}</p>
-                    <div>
-                      {ingredients.map((ingredient) => (
-                        <>
-                          <p>{ingredient.food.name}</p>
-                          <p>
-                            {ingredient.amount} {ingredient.measurement_unit}
-                          </p>
-                        </>
-                      ))}
-                    </div>
+
                   </>
                 ) : (
                   <>
