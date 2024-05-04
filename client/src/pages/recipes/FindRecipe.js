@@ -9,7 +9,6 @@ import {OpenAI} from 'openai'
 
 const API_KEY = process.env.REACT_APP_OPENAI_API_KEY
 
-console.log(API_KEY)
 
 const openai = new OpenAI({
 
@@ -129,7 +128,7 @@ function FindRecipe() {
                         />
                         <Field
                           name={`ingredients[${index}].amount`}
-                          placeholder="Amount"
+                          placeholder="#"
                           value={
                             formik.values.ingredients[index]
                               ? formik.values.ingredients[index].amount
@@ -139,6 +138,7 @@ function FindRecipe() {
                           className="m-1 p-1 rounded-lg w-[40px]"
                         />
                         <Field
+                          as='select'
                           name={`ingredients[${index}].measurement_unit`}
                           placeholder="Measurement"
                           value={
@@ -147,22 +147,30 @@ function FindRecipe() {
                               : ""
                           }
                           onChange={formik.handleChange}
-                          className="m-1 p-1 rounded-lg w-[40px]"
-                        />
+                          className="m-1 p-1 rounded-lg w-[80px]"
+                        >
+                          <option value=''>Select</option>
+                          <option value='pints'>Pint</option>
+                          <option value='quarts'>Quart</option>
+                          <option value='cups'>Cup</option>
+                          <option value='pints'>Pint</option>
+                          <option value='quarts'>Quart</option>
+
+                        </Field>
 
                         <button
                           type="button"
                           onClick={() => handleDeleteIngredient(index)}
-                          className="p-1 m-1 bg-champagne text-black rounded-lg"
+                          className="p-1 m-1 bg-champagne text-black w-[30px] rounded-lg"
                         >
                           −
                         </button>
                         <button
                           type="button"
                           onClick={handleAddIngredient}
-                          className="p-1 m-1 bg-champagne text-black rounded-lg"
+                          className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                         >
-                          ➕
+                          +
                         </button>
                       </div>
                     ))}
