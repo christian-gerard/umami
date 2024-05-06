@@ -127,22 +127,30 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
     <>
       {route.id ? (
         <div>
-          <div>
+          <div className='bg-champagne p-6 m-2 rounded-lg'>
+          <button
+              className=" border rounded-lg p-2 m-2 text-black"
+              onClick={ () => nav('/cookbook')}
+            >
+              Back
+            </button>
             <button
-              className="bg-shittake rounded-lg p-2 text-white"
+              className="bg-shittake rounded-lg p-2 m-2 text-white"
               onClick={handleEdit}
             >
               Edit
             </button>
             <button
-              className="bg-white rounded-lg p-2 text-shittake "
+              className="bg-white rounded-lg p-2 m-2 text-shittake "
               onClick={handleDelete}
             >
               Delete
             </button>
-            <p className="text-4xl">{currentRecipe.name}</p>
+            <p className="text-4xl m-2 ">{currentRecipe.name}</p>
+            <h1 className='text-2xl italic'>Instructions</h1>
             <p className="text-lg">{currentRecipe.steps}</p>
 
+            <h1 className='text-2xl italic'>Ingredients</h1>
             {currentRecipe.ingredients ? (
               <ul>
                 {currentRecipe.ingredients.map((ingredient) => (
@@ -217,6 +225,19 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                         push({ name: "", amount: "", measurement_unit: "" });
                       };
 
+                      const handleDeleteIngredient = (index) => {
+
+                        if (index !== 0) {
+      
+                          remove(index)
+                          const updatedIngredients = [...formik.values.ingredients]
+                          updatedIngredients.splice(index, 1)
+                          formik.setFieldValue('ingredients',updatedIngredients)
+      
+                        }
+      
+                      }
+
                       return (
                         <div>
                           {ingredients.map((ingredient, index) => (
@@ -230,7 +251,7 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                                 }
                                 onChange={formik.handleChange}
                                 placeholder="Name"
-                                className="m-1 p-1 rounded-lg w-[250px]"
+                                className="m-1 p-1 rounded-lg border w-[250px]"
                               />
                               <Field
                                 name={`ingredients[${index}].amount`}
@@ -241,9 +262,10 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                                     : ""
                                 }
                                 onChange={formik.handleChange}
-                                className="m-1 p-1 rounded-lg w-[40px]"
+                                className="m-1 p-1 rounded-lg border w-[40px]"
                               />
                               <Field
+                                as='select'
                                 name={`ingredients[${index}].measurement_unit`}
                                 placeholder="Measurement"
                                 value={
@@ -252,12 +274,21 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
                                     : ""
                                 }
                                 onChange={formik.handleChange}
-                                className="m-1 p-1 rounded-lg w-[40px]"
-                              />
+                                className="border m-1 p-1 rounded-lg w-[100px]"
+                              >
+                                <option value=''>Measur.</option>
+                                <option value='pints'>Pint</option>
+                                <option value='quarts'>Quart</option>
+                                <option value='cups'>Cup</option>
+                                <option value='oz'>Ounce</option>
+                                <option value='fl oz'>Fluid Ounce</option>
+                                <option value='tbsp'>Tablespoon</option>
+                                <option value='tsp'>Teaspoon</option>
+                              </Field>
 
                               <button
                                 type="button"
-                                onClick={() => remove(index)}
+                                onClick={() => handleDeleteIngredient(index)}
                                 className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                               >
                                 −
@@ -297,9 +328,9 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
 
 
             <NavLink to={`/recipes/${id}`}>
-              <div className="p-2 bg-champagne text-black m-2 rounded-lg">
+              <div className="p-2 bg-champagne text-black m-2 rounded-lg w-[300px] h-[100px]">
                 <div className="flex flex-row justify-between">
-                  <p className="text-2xl font-bold">{name}</p>
+                  <p className="text-lg font-bold">{name}</p>
                 </div>
     
                 <p className="text-m">{steps.slice(0, 25)}...</p>
