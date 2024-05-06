@@ -45,8 +45,8 @@ function Profile() {
     })
 
     const initialValues = {
-        username: user.username,
-        email: user.email
+        username: user?.username,
+        email: user?.email
     }
 
 	const formik = useFormik({

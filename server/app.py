@@ -333,6 +333,7 @@ class Signup(Resource):
             db.session.add(new_user)
             db.session.commit()
             session['user_id'] = new_user.id
+            session['username'] = new_user.username
             return user_schema.dump(new_user), 201
         except Exception as e:
             return {"Error": str(e)}, 400
