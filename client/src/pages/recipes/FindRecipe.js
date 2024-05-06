@@ -9,6 +9,8 @@ import {OpenAI} from 'openai'
 
 const API_KEY = process.env.REACT_APP_OPENAI_API_KEY
 
+console.log(API_KEY)
+
 
 const openai = new OpenAI({
 
@@ -91,6 +93,7 @@ function FindRecipe() {
             className="flex flex-col mt-2 text-white"
             onSubmit={formik.handleSubmit}
           >
+
             <label htmlFor="name">Ingredients</label>
 
             <FieldArray name="ingredients" validateOnChange={true}>
@@ -104,17 +107,22 @@ function FindRecipe() {
                 };
 
                 const handleDeleteIngredient = (index) => {
-                  remove(index)
-                  const updatedIngredients = [...formik.values.ingredients]
-                  updatedIngredients.splice(index, 1)
-                  formik.setFieldValue('ingredients',updatedIngredients)
+
+                  if (index !== 0) {
+
+                    remove(index)
+                    const updatedIngredients = [...formik.values.ingredients]
+                    updatedIngredients.splice(index, 1)
+                    formik.setFieldValue('ingredients',updatedIngredients)
+
+                  }
 
                 }
 
                 return (
                   <div>
                     {ingredients.map((ingredient, index) => (
-                      <div key={index} className="text-black">
+                      <div key={index} className="text-black text-nowrap">
                         <Field
                           name={`ingredients[${index}].name`}
                           value={
@@ -149,13 +157,14 @@ function FindRecipe() {
                           onChange={formik.handleChange}
                           className="m-1 p-1 rounded-lg w-[80px]"
                         >
-                          <option value=''>Select</option>
+                          <option value=''>Measur.</option>
                           <option value='pints'>Pint</option>
                           <option value='quarts'>Quart</option>
                           <option value='cups'>Cup</option>
-                          <option value='pints'>Pint</option>
-                          <option value='quarts'>Quart</option>
-
+                          <option value='oz'>Ounce</option>
+                          <option value='fl oz'>Fluid Ounce</option>
+                          <option value='tbsp'>Tablespoon</option>
+                          <option value='tsp'>Teaspoon</option>
                         </Field>
 
                         <button
@@ -180,7 +189,7 @@ function FindRecipe() {
             </FieldArray>
 
             <button
-              className="bg-champagne text-black rounded-lg"
+              className="bg-champagne text-black rounded-lg mt-3 pt-1 pb-1"
               type="submit"
             >
               Search
@@ -211,7 +220,7 @@ function FindRecipe() {
           </div>
           :
           <>
-            <h1>Search for Recipes</h1>
+            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'>Enter your ingredients!</h1>
           </>
         }
       </div>

@@ -74,7 +74,13 @@ function Cookbook() {
             toast.success("Recipe Created");
           });
         } else {
-          return res.json().then((errorObj) => toast.error(errorObj.message));
+
+          return res.json().then((data) => {
+
+
+            const message = data.Error
+            toast.error(message)
+          })
         }
       });
     },
@@ -102,7 +108,7 @@ function Cookbook() {
           </button>
         </div>
 
-        <div className=" mt-10 rounded-xl text-white flex flex-wrap">
+        <div className=" mt-10 rounded-xl text-white flex flex-wrap align-center ">
           {user ? (
             user.recipes
               .slice(startIndex, endIndex)
@@ -127,137 +133,167 @@ function Cookbook() {
       </div>
 
       {recipeForm ? (
+        <div className="fixed inset-0 flex justify-center items-center transition-colors backdrop-blur"> 
         <Formik
           onSubmit={formik.handleSubmit}
           initialValues={initialValues}
-          className="fixed inset-0 flex justify-center items-center transition-colors backdrop-blur"
+          className=""
         >
           <form
             onSubmit={formik.handleSubmit}
-            className="bg-white p-12  flex flex-row text-lg rounded-xl border-2 border-shittake fixed inset-0 flex justify-center items-center transition-colors backdrop-blur "
+            className="bg-white border border-shittake rounded-lg p-2"
           >
             <button
-              className="bg-shittake text-white rounded-xl mb-6 "
+              className="bg-shittake text-white rounded-xl mb-6 flex justify-center w-full "
               type="button"
               onClick={newRecipe}
             >
               X
             </button>
 
-            <div className="flex flex-col">
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                name="name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.name}
-                className="border rounded-lg p-1"
-                placeholder="Name"
-              />
-              {formik.errors.name && formik.touched.name && (
-                <div className="error-message show">{formik.errors.name}</div>
-              )}
+            <div className='flex flex-row'>
 
-              <label htmlFor="steps">Ingredients</label>
+              <div className="flex flex-col mr-3">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.name}
+                  className="border p-1 m-1 rounded-lg"
+                  placeholder="Name"
+                />
+                {formik.errors.name && formik.touched.name && (
+                  <div className="error-message show">{formik.errors.name}</div>
+                )}
 
-              <FieldArray name="ingredients" validateOnChange={true}>
-                {(fieldArrayProps) => {
-                  const { push, remove, form } = fieldArrayProps;
-                  const { values } = form;
-                  const ingredients = values.ingredients || [];
+                <label htmlFor="ingredients">Ingredients</label>
 
-                  const handleAddIngredient = () => {
-                    push({ name: "", amount: "", measurement_unit: "" });
-                  };
+                <FieldArray name="ingredients" validateOnChange={true}>
+                  {(fieldArrayProps) => {
+                    const { push, remove, form } = fieldArrayProps;
+                    const { values } = form;
+                    const ingredients = values.ingredients || [];
 
-                  return (
-                    <div>
-                      {ingredients.map((ingredient, index) => (
-                        <div key={index} className="text-black">
-                          <Field
-                            name={`ingredients[${index}].name`}
-                            value={
-                              formik.values.ingredients[index]
-                                ? formik.values.ingredients[index].name
-                                : ""
-                            }
-                            onChange={formik.handleChange}
-                            placeholder="Name"
-                            className="m-1 p-1 rounded-lg w-[250px]"
-                          />
-                          <Field
-                            name={`ingredients[${index}].amount`}
-                            placeholder="Amount"
-                            value={
-                              formik.values.ingredients[index]
-                                ? formik.values.ingredients[index].amount
-                                : ""
-                            }
-                            onChange={formik.handleChange}
-                            className="m-1 p-1 rounded-lg w-[40px]"
-                          />
-                          <Field
-                            name={`ingredients[${index}].measurement_unit`}
-                            placeholder="Measurement"
-                            value={
-                              formik.values.ingredients[index]
-                                ? formik.values.ingredients[index].measurement_unit
-                                : ""
-                            }
-                            onChange={formik.handleChange}
-                            className="m-1 p-1 rounded-lg w-[40px]"
-                          />
+                    const handleAddIngredient = () => {
+                      push({ name: "", amount: "", measurement_unit: "" });
+                    };
 
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="p-1 m-1 bg-champagne text-black rounded-lg"
-                          >
-                            −
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleAddIngredient}
-                            className="p-1 m-1 bg-champagne text-black rounded-lg"
-                          >
-                            ➕
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                }}
-              </FieldArray>
+                    const handleDeleteIngredient = (index) => {
+
+                      if (index !== 0) {
+    
+                        remove(index)
+                        const updatedIngredients = [...formik.values.ingredients]
+                        updatedIngredients.splice(index, 1)
+                        formik.setFieldValue('ingredients',updatedIngredients)
+    
+                      }
+    
+                    }
+
+                    return (
+                      <div>
+                        {ingredients.map((ingredient, index) => (
+                          <div key={index} className="text-black">
+                            <Field
+                              name={`ingredients[${index}].name`}
+                              value={
+                                formik.values.ingredients[index]
+                                  ? formik.values.ingredients[index].name
+                                  : ""
+                              }
+                              onChange={formik.handleChange}
+                              placeholder="Name"
+                              className="m-1 p-1 border rounded-lg w-[250px]"
+                            />
+                            <Field
+                              name={`ingredients[${index}].amount`}
+                              placeholder="#"
+                              value={
+                                formik.values.ingredients[index]
+                                  ? formik.values.ingredients[index].amount
+                                  : ""
+                              }
+                              onChange={formik.handleChange}
+                              className="m-1 p-1 border rounded-lg w-[40px]"
+                            />
+                            <Field
+                              as='select'
+                              name={`ingredients[${index}].measurement_unit`}
+                              placeholder="Unit"
+                              value={
+                                formik.values.ingredients[index]
+                                  ? formik.values.ingredients[index].measurement_unit
+                                  : ""
+                              }
+                              onChange={formik.handleChange}
+                              className="m-1 p-1 border rounded-lg w-[120px]"
+                            >
+                              <option value=''>Measur.</option>
+                              <option value='pints'>Pint</option>
+                              <option value='quarts'>Quart</option>
+                              <option value='cups'>Cup</option>
+                              <option value='oz'>Ounce</option>
+                              <option value='fl oz'>Fluid Ounce</option>
+                              <option value='tbsp'>Tablespoon</option>
+                              <option value='tsp'>Teaspoon</option>
+
+                            </Field>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteIngredient(index)}
+                              className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
+                            >
+                              -
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleAddIngredient}
+                              className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
+                            >
+                              +
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }}
+                </FieldArray>
+              </div>
+
+              <div className="flex flex-col  align-top ml-3">
+                <label htmlFor="steps">Instructions</label>
+
+                <textarea
+                  name="steps"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.steps}
+                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-full m-1 p-1"
+                  placeholder="Existing Steps here"
+                /> 
+
+
+                
+
+                {formik.errors.steps && formik.touched.steps && (
+                  <div className="error-message show">{formik.errors.steps}</div>
+                )}
+
+              </div>
+
             </div>
 
-            <div className="flex flex-col w-[600px] align-top">
-              <label htmlFor="steps">Instructions</label>
-              <p className='text-left align-top h-[500px] w-[400px] resize-none overflow-auto'> 
+            <button className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
+              Add Recipe
+            </button>
 
-              <input
-                type="text"
-                name="steps"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.steps}
-                className="border rounded-lg h-[500px] align-top resize-none overflow-auto"
-                placeholder="Existing Steps here"
-              /> 
-
-              </p>
-              
-
-              {formik.errors.steps && formik.touched.steps && (
-                <div className="error-message show">{formik.errors.steps}</div>
-              )}
-
-              <button className="text-2xl bg-shittake text-white hover:bg-transparent rounded-xl">
-                Add Recipe
-              </button>
-            </div>
           </form>
         </Formik>
+        </div>
       ) : (
         <></>
       )}

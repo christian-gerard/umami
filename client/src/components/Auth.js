@@ -156,7 +156,7 @@ function Auth() {
             )}
             <input
               type="submit"
-              className="submit bg-blue-500"
+              className="bg-champagne text-black text-lg p-1 m-1 rounded-lg"
               value={isLogin ? "Login" : "Sign up"}
             />
 
