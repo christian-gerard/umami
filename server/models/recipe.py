@@ -12,6 +12,10 @@ class Recipe(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(20))
     steps = db.Column(db.String())
+    category = db.Column(db.String())
+    source = db.Column(db.String())
+    prep_time = db.Column(db.String())
+    recipe_img = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
@@ -20,6 +24,7 @@ class Recipe(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates='recipes')
     cookbooks = db.relationship('Cookbook', back_populates='recipe', cascade='all, delete-orphan')
     ingredients = db.relationship('Ingredient', back_populates='recipe', cascade='all, delete-orphan')
+    recipe_imgs = db.relationship('RecipeImg', back_populates='recipe', cascade='all, delete-orphan' )
 
     # # # # # Serialize
     serialize_rules=('-user','-cookbooks')

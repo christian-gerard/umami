@@ -9,6 +9,7 @@ from models.cookbook import Cookbook
 from models.food import Food
 from models.recipe import Recipe
 from models.ingredient import Ingredient
+from models.recipe_img import RecipeImg
 from schemas.user_schema import user_schema, users_schema
 from schemas.cookbook_schema import cookbook_schema, cookbooks_schema
 from schemas.food_schema import food_schema, foods_schema
@@ -150,6 +151,9 @@ class Recipes(Resource):
             recipe = recipe_schema.load({
                 "name" : data.get("name"),
                 "steps" : data.get("steps"),
+                "category": data.get("category"),
+                "source": data.get("source"),
+                "prep_time": data.get("prep_time"),
                 "user_id" : session.get("user_id")
             })
             db.session.add(recipe)
@@ -181,6 +185,20 @@ class Recipes(Resource):
 
                     return {"Error": f"{ingredient.name} is not a listed food item"}, 400
                     
+
+            recipe_image = data.get('image_file')
+
+            binary = recipe_image.read()
+
+            ipdb.set_trace()
+
+
+
+
+
+
+
+
             db.session.commit()
             return recipe_schema.dump(recipe), 201
             

@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { object, string, array, number } from "yup";
 import { useDropzone} from 'react-dropzone'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 function Cookbook() {
   const nav = useNavigate();
@@ -84,12 +86,17 @@ function Cookbook() {
     initialValues,
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
+
+
+
+      const formDataWithImage = {...formData, "image_file": files[0]}
+      
       fetch("/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataWithImage),
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
@@ -108,6 +115,12 @@ function Cookbook() {
           })
         }
       });
+
+
+
+
+
+
     },
   });
 
@@ -124,7 +137,7 @@ function Cookbook() {
     );
   }, [user]);
 
-console.log(UploadFileIcon)
+console.log(files[0] )
 
   return (
     <div className="p-6 mt-6 ">
@@ -338,14 +351,14 @@ console.log(UploadFileIcon)
                               onClick={() => handleDeleteIngredient(index)}
                               className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                             >
-                              -
+                              <RemoveIcon />
                             </button>
                             <button
                               type="button"
                               onClick={handleAddIngredient}
                               className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                             >
-                              +
+                              <AddIcon />
                             </button>
                           </div>
                         ))}
@@ -410,7 +423,7 @@ console.log(UploadFileIcon)
 
                 <div className='flex flex-row'>
 
-                  <label htmlFor="source">
+                  <label htmlFor="recipe_img">
                     Recipe Image
                   </label>
 
@@ -479,7 +492,7 @@ console.log(UploadFileIcon)
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.steps}
-                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[300px] m-1 p-1"
+                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[200px] m-1 p-1"
                   placeholder="Instructions for recipe (include any helpful tips as well!)"
                 /> 
 
@@ -492,7 +505,7 @@ console.log(UploadFileIcon)
 
             </div>
 
-            <button className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
+            <button type ='submit' className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
               Add Recipe
             </button>
 
