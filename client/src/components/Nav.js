@@ -14,8 +14,8 @@ function Nav () {
             {
                 user ? 
                 
-                <div onClick={handleMenu} className='text-4xl text-white sticky rounded-xl p-2 top-0 left-0 right-0 flex flex-row tracking-widest items-end border border-white '>
-                <div onClick={handleMenu} className='text-4xl text-white sticky bg-shittake rounded-xl p-6 top-0 left-0 right-0 flex flex-row tracking-widest items-end border border-white '>
+                <div onClick={handleMenu} className='text-4xl text-white sticky rounded-xl p-2 top-0 left-0 right-0 flex flex-row tracking-widest items-end  '>
+                <div onClick={handleMenu} className='text-4xl text-white sticky bg-shittake rounded-xl p-6 top-0 left-0 right-0 flex flex-row tracking-widest items-end  '>
                
                 <h1 className='hover:text-champagne tracking-[0.25em] ' >UMAMI</h1>
 
