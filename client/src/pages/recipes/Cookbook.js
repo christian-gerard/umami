@@ -86,16 +86,17 @@ function Cookbook() {
     initialValues,
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
-      const formDataPlusImg = {...formData, "recipe_img" : `${files[0].preview}`}
-      
-      debugger
 
+
+
+      const formDataWithImage = {...formData, "image_file": files[0]}
+      
       fetch("/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formDataPlusImg),
+        body: JSON.stringify(formDataWithImage),
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
@@ -114,6 +115,12 @@ function Cookbook() {
           })
         }
       });
+
+
+
+
+
+
     },
   });
 
@@ -130,7 +137,7 @@ function Cookbook() {
     );
   }, [user]);
 
-console.log(UploadFileIcon)
+console.log(files[0] )
 
   return (
     <div className="p-6 mt-6 ">
@@ -416,7 +423,7 @@ console.log(UploadFileIcon)
 
                 <div className='flex flex-row'>
 
-                  <label htmlFor="source">
+                  <label htmlFor="recipe_img">
                     Recipe Image
                   </label>
 
@@ -498,7 +505,7 @@ console.log(UploadFileIcon)
 
             </div>
 
-            <button className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
+            <button type ='submit' className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
               Add Recipe
             </button>
 
