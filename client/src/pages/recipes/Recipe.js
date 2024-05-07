@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import RecipeForm from "../recipes/RecipeForm";
 import Nav from "../../components/Nav";
+import recipeimgHolder from '../../assets/recipeimgholder.png'
 
-function Recipe({ id, name, steps, ingredients, cookbooks }) {
+function Recipe({ id, name, steps, ingredients, category, prep_time, source, recipe_img, cookbooks }) {
   const { user, updateRecipes } = useContext(UserContext);
   const route = useParams();
   const [editMode, setEditMode] = useState(false);
@@ -147,6 +148,11 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
               Delete
             </button>
             <p className="text-4xl m-2 ">{currentRecipe.name}</p>
+            <img alt='recipe_img' src={currentRecipe.recipe_img} className='w-[200px] h-[200px] '/> 
+            <p>Category: {currentRecipe.category}</p>
+            <p>Source: {currentRecipe.source}</p>
+            <p>Prep Time: {currentRecipe.prep_time}</p>
+
             <h1 className='text-2xl italic'>Instructions</h1>
             <p className="text-lg">{currentRecipe.steps}</p>
 
@@ -328,23 +334,39 @@ function Recipe({ id, name, steps, ingredients, cookbooks }) {
 
 
             <NavLink to={`/recipes/${id}`}>
-              <div className="p-2 bg-champagne text-black m-2 rounded-lg w-[300px] h-[100px]">
-                <div className="flex flex-row justify-between">
-                  <p className="text-lg font-bold">{name}</p>
-                </div>
-    
-                <p className="text-m">{steps.slice(0, 25)}...</p>
-    
-                {ingredients ? (
-                  <>
-                    <p>Ingredients: {ingredients.length}</p>
+              <div>
 
-                  </>
-                ) : (
-                  <>
-                    <h1 className='text-black'>No Recipes</h1>
-                  </>
-                )}
+                <div className='trapezoid'>
+
+                </div>
+
+                <div className="p-2 bg-champagne text-black m-2 rounded-lg w-[300px] h-full">
+                  <div className="flex flex-row justify-between">
+                    <p className="text-lg font-bold">{name}</p>
+                  </div>
+                  <p>Category: {category}</p>
+                  <p>Source: {source}</p>
+                  <p>Prep Time: {prep_time}</p>
+                  <img src={ recipe_img ? recipe_img : recipeimgHolder } alt='recipeimagedetails' className='w-[50px] h-[50px] border rounded-2xl'/>
+      
+                  <p className="text-m">{steps.slice(0, 25)}...</p>
+      
+                  {ingredients ? (
+                    <>
+                      <p>Ingredients: {ingredients.length}</p>
+
+                    </>
+                  ) : (
+                    <>
+                      <h1 className='text-black'>No Recipes</h1>
+                    </>
+                  )}
+                </div>
+
+
+
+
+
               </div>
             </NavLink>
 

@@ -5,6 +5,7 @@ import { UserContext } from "../../context/UserContext";
 import { useFormik, Field, FieldArray, Formik } from "formik";
 import toast from "react-hot-toast";
 import { object, string, array, number } from "yup";
+import { useDropzone} from 'react-dropzone'
 
 function Cookbook() {
   const nav = useNavigate();
@@ -14,6 +15,15 @@ function Cookbook() {
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * 10;
   const endIndex = currentPage * 10;
+  const [files, setFiles] = useState([]);
+  const {getRootProps, getInputProps} = useDropzone({
+    accept: 'image/*',
+    onDrop: acceptedFiles => {
+      setFiles(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })));
+    }
+  });
 
   const handlePrev = () => {
     if (currentPage > 1) {
@@ -32,11 +42,21 @@ function Cookbook() {
   };
 
   const recipeSchema = object({
-    name: string(),
-    steps: string(),
+    name: string()
+    .required(),
+    steps: string()
+    .required(),
+    source: string()
+    .required(),
+    category: string()
+    .required()
+    .oneOf(['breakfast', 'lunch']),
+    prep_time: string()
+    .required(),
     ingredients: array().of(
       object({
-        name: string(),
+        name: string()
+        .required(),
         amount: number(),
         measurement_unit: string(),
       }),
@@ -46,6 +66,10 @@ function Cookbook() {
   const initialValues = {
     name: "",
     steps: "",
+    category: "",
+    prep_time: "",
+    source: "",
+    recipe_img:"",
     ingredients: [
       {
         name: "",
@@ -86,6 +110,7 @@ function Cookbook() {
     },
   });
 
+
   useEffect(() => {
     user ? (
       setPages((pages) => Math.ceil(user.recipes.length / 10))
@@ -94,11 +119,29 @@ function Cookbook() {
     );
   }, [user]);
 
+
+
   return (
     <div className="p-6 mt-6 ">
       <div className="flex flex-col flex-grow ">
         <div className="flex flex-row justify-between">
           <h1 className="text-5xl tracking-widest">My Cookbook</h1>
+
+          <input 
+          className='border text-black w-[250px]'
+          placeholder='Search Recipe Name...'
+          />
+
+          <select
+            className='border'
+          >
+            <option>Search Category</option>
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Snack</option>
+            <option>Dessert</option>
+          </select>
     
           <button
             className="text-lg bg-shittake hover:text-black rounded-lg p-2 text-white "
@@ -154,7 +197,17 @@ function Cookbook() {
             <div className='flex flex-row'>
 
               <div className="flex flex-col mr-3">
-                <label htmlFor="name">Name</label>
+                <div className='flex flex-row'>
+
+                  <label htmlFor="name">
+                    Name                 
+                  </label>
+
+                  {formik.errors.name && formik.touched.name && (
+                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.name.toUpperCase()}</div>
+                  )}
+
+                </div>
                 <input
                   type="text"
                   name="name"
@@ -162,13 +215,45 @@ function Cookbook() {
                   onBlur={formik.handleBlur}
                   value={formik.values.name}
                   className="border p-1 m-1 rounded-lg"
-                  placeholder="Name"
+                  placeholder="Recipe Name"
                 />
-                {formik.errors.name && formik.touched.name && (
-                  <div className="error-message show">{formik.errors.name}</div>
-                )}
 
-                <label htmlFor="ingredients">Ingredients</label>
+                <div className='flex flex-row'>
+
+                  <label htmlFor="category">
+                    Category                
+                  </label>
+
+                  {formik.errors.category && formik.touched.category && (
+                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.category.toUpperCase()}</div>
+                  )}
+
+                </div>
+
+                <select
+                  as='select'
+                  name="category"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.category}
+                  className="border p-1 m-1 rounded-lg"
+                  placeholder="Category"
+                >
+                  <option value='' className='bold italic'>Select Category</option>
+                  <option value='breakfast'>Breakfast</option>
+                  <option value='lunch'>Lunch</option>
+                  <option value='dinner'>Dinner</option>
+                  <option value='snack'>Snack</option>
+                  <option value='dessert'>Dessert</option>
+                </select>
+
+                <div className='flex flex-row'>
+
+                  <label htmlFor="ingredients">
+                    Ingredients
+                  </label>
+
+                </div>
 
                 <FieldArray name="ingredients" validateOnChange={true}>
                   {(fieldArrayProps) => {
@@ -208,6 +293,7 @@ function Cookbook() {
                               placeholder="Name"
                               className="m-1 p-1 border rounded-lg w-[250px]"
                             />
+
                             <Field
                               name={`ingredients[${index}].amount`}
                               placeholder="#"
@@ -265,23 +351,106 @@ function Cookbook() {
               </div>
 
               <div className="flex flex-col  align-top ml-3">
-                <label htmlFor="steps">Instructions</label>
+
+              <div className='flex flex-row'>
+
+                <label htmlFor="prep_time">
+                  Prep Time          
+                </label>
+
+                {formik.errors.prep_time && formik.touched.prep_time && (
+                  <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.prep_time.toUpperCase()}</div>
+                )}
+
+              </div>
+
+                <select
+                  as='select'
+                  name="prep_time"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.prep_time}
+                  className="border p-1 m-1 rounded-lg"
+                  placeholder="Prep time"
+                >
+                  <option value=''>Select Prep Time</option>
+                  <option value='10 min'>  less than 5 min</option>
+                  <option value='10 min'>  5 - 10 min</option>
+                  <option value='10 min'>  10 - 20 min</option>
+                  <option value='10 min'>  20 - 30 min</option>
+                  <option value='10 min'>  20 - 30 min</option>
+                </select>
+
+                <div className='flex flex-row'>
+
+                  <label htmlFor="source">
+                    Source        
+                  </label>
+
+                  {formik.errors.source && formik.touched.source && (
+                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.source.toUpperCase()}</div>
+                  )}
+
+                </div>
+                <input
+                  type="text"
+                  name="source"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.source}
+                  className="border p-1 m-1 rounded-lg"
+                  placeholder="Where did you find this recipe?"
+                />
+
+
+                <div className='flex flex-row'>
+
+                  <label htmlFor="source">
+                    Recipe Image
+                  </label>
+
+                  {formik.errors.source && formik.touched.source && (
+                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.source.toUpperCase()}</div>
+                  )}
+
+                </div>
+
+                <img alt='preview' src={files.preview} />
+
+
+                <div  {...getRootProps({className: 'dropzone'})}>
+                  <input {...getInputProps()} />
+                  <p className='bg-shittake border text-white p-2 rounded-lg'>Upload Img Here</p>
+                  {files ? files.name : ''}
+                </div>
+
+
+
+                <div className='flex flex-row'>
+
+                  <label htmlFor="instructions">
+                    Instructions       
+                  </label>
+
+                  {formik.errors.steps && formik.touched.steps && (
+                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.steps.toUpperCase()}</div>
+                  )}
+
+                </div>
 
                 <textarea
                   name="steps"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.steps}
-                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-full m-1 p-1"
-                  placeholder="Existing Steps here"
+                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[300px] m-1 p-1"
+                  placeholder="Instructions for recipe (include any helpful tips as well!)"
                 /> 
 
 
                 
 
-                {formik.errors.steps && formik.touched.steps && (
-                  <div className="error-message show">{formik.errors.steps}</div>
-                )}
+
 
               </div>
 
