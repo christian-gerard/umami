@@ -21,6 +21,11 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
             error="Body must be between 10 and 40,000 characters")
         )
 
+    category = fields.String()
+    source = fields.String()
+    recipe_img = fields.String()
+    prep_time = fields.String()
+
     user_id = fields.Integer()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()

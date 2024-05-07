@@ -150,6 +150,10 @@ class Recipes(Resource):
             recipe = recipe_schema.load({
                 "name" : data.get("name"),
                 "steps" : data.get("steps"),
+                "category": data.get("category"),
+                "source": data.get("source"),
+                "prep_time": data.get("prep_time"),
+                "recipe_img": data.get("recipe_img"),
                 "user_id" : session.get("user_id")
             })
             db.session.add(recipe)

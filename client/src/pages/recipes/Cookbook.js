@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { object, string, array, number } from "yup";
 import { useDropzone} from 'react-dropzone'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 function Cookbook() {
   const nav = useNavigate();
@@ -84,12 +86,16 @@ function Cookbook() {
     initialValues,
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
+      const formDataPlusImg = {...formData, "recipe_img" : `${files[0].preview}`}
+      
+      debugger
+
       fetch("/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataPlusImg),
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
@@ -338,14 +344,14 @@ console.log(UploadFileIcon)
                               onClick={() => handleDeleteIngredient(index)}
                               className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                             >
-                              -
+                              <RemoveIcon />
                             </button>
                             <button
                               type="button"
                               onClick={handleAddIngredient}
                               className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
                             >
-                              +
+                              <AddIcon />
                             </button>
                           </div>
                         ))}
@@ -479,7 +485,7 @@ console.log(UploadFileIcon)
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.steps}
-                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[300px] m-1 p-1"
+                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[200px] m-1 p-1"
                   placeholder="Instructions for recipe (include any helpful tips as well!)"
                 /> 
 
