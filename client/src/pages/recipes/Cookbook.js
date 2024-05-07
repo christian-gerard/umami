@@ -6,6 +6,7 @@ import { useFormik, Field, FieldArray, Formik } from "formik";
 import toast from "react-hot-toast";
 import { object, string, array, number } from "yup";
 import { useDropzone} from 'react-dropzone'
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 function Cookbook() {
   const nav = useNavigate();
@@ -16,7 +17,7 @@ function Cookbook() {
   const startIndex = (currentPage - 1) * 10;
   const endIndex = currentPage * 10;
   const [files, setFiles] = useState([]);
-  const {getRootProps, getInputProps} = useDropzone({
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({
     accept: 'image/*',
     onDrop: acceptedFiles => {
       setFiles(acceptedFiles.map(file => Object.assign(file, {
@@ -110,6 +111,10 @@ function Cookbook() {
     },
   });
 
+  const removeFile = (name) => {
+    setFiles(files => files.filter(file => file.name !== name ))
+  }
+
 
   useEffect(() => {
     user ? (
@@ -119,7 +124,7 @@ function Cookbook() {
     );
   }, [user]);
 
-
+console.log(UploadFileIcon)
 
   return (
     <div className="p-6 mt-6 ">
@@ -415,15 +420,46 @@ function Cookbook() {
 
                 </div>
 
-                <img alt='preview' src={files.preview} />
-
-
                 <div  {...getRootProps({className: 'dropzone'})}>
                   <input {...getInputProps()} />
-                  <p className='bg-shittake border text-white p-2 rounded-lg'>Upload Img Here</p>
-                  {files ? files.name : ''}
+                  <p className='bg-shittake border text-white p-2 rounded-lg'>
+
+                    <UploadFileIcon />
+                    Drag or Click Here 
+                    
+                    </p>
                 </div>
 
+                  {files[0] ? 
+                  <div className='flex flex-row justify-between bg-champagne p-2 m-2 rounded-lg '> 
+
+                    <div clasName='flex flex-row'>
+                      <img alt='img_preview' src={files[0].preview} className='h-[50px] w-[50px]' />
+
+                      <div className='flex flex-col'> 
+
+                        <p>{files[0].name}</p>
+                        <p>{files[0].size}</p>
+                        
+                      </div>
+
+                    </div>
+
+
+                    <div className='flex flex-col'>
+
+                      <button 
+                        className='bg-shittake text-white rounded-lg p-1'
+                        onClick={() => removeFile(files[0].name)}
+                      >
+                        Remove
+                      </button>
+
+                    </div>
+
+                  </div>
+                  : 
+                  <h1>No file Uploaded</h1>}
 
 
                 <div className='flex flex-row'>
