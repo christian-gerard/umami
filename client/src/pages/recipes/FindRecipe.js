@@ -3,15 +3,14 @@ import { useFormik, FieldArray, Formik, Field } from "formik";
 import toast from "react-hot-toast";
 import { object, string, array, number } from "yup";
 import {OpenAI} from 'openai'
+import StraightenIcon from '@mui/icons-material/Straighten';
+import BlockIcon from '@mui/icons-material/Block';
+import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
-
-
-const API_KEY = process.env.REACT_APP_OPENAI_API_KEY
-
-
-console.log(API_KEY)
-
+const API_KEY = ''
 
 const openai = new OpenAI({
 
@@ -23,6 +22,8 @@ const openai = new OpenAI({
 
 function FindRecipe() {
   const [aiRecipes, setAiRecipes] = useState('')
+  const [isOpen, setIsOpen] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const ingredientSearchSchema = object({
     settings: string(),
     ingredients: array().of(
@@ -35,7 +36,9 @@ function FindRecipe() {
   });
 
   const initialValues = {
-    settings: "",
+    added_ingredients: "",
+    restrictions: "",
+    strictness: "",
     ingredients: [
       {
         name: "",
@@ -49,14 +52,37 @@ function FindRecipe() {
     initialValues,
     validationSchema: ingredientSearchSchema,
     onSubmit: (formData) => {
+
+      setIsLoading(true)
+
       console.log(formData)
+
       const response = openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
+        temperature: 0.1,
         messages: [{role: "user", content: `
 
-        
+
           Could you generate a recipe for me based on the following ingredients? I only have these ingredients and NOTHING ELSE.
-          Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE. 
+
+          ${formData.added_ingredients ? 
+            'Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE.' 
+            : 
+            '' }
+        
+          IF the ingredients are not generally used together, add a message to the notes saying the combination is unusual or avant garde. If the ingredients go well together do not add any messages to notes.
+
+
+
+
+
+
+
+
+
+
+
+
 
           ONLY INCLUDE THE JSON
 
@@ -64,7 +90,12 @@ function FindRecipe() {
           {
             "name": "recipeName", 
             "ingredients": [{"name": "ingredientName", "amount": "amount", "measurement_unit": ""}], 
-            "steps":""}
+            "prep_time": "",
+            "category" : "",
+            "steps":"",
+            "notes": ""
+          
+          }
 
           ${formData.ingredients.map((ingredient) =>  `${ingredient.amount} ${ingredient.measurement_unit} of ${ingredient.name} `)}
 
@@ -73,9 +104,12 @@ function FindRecipe() {
         }]
       }).then(resp => {
         const json = resp.choices[0].message.content
+        console.log(json)
         const parsedJson = JSON.parse(json)
 
         setAiRecipes(parsedJson)
+
+        setIsLoading(false)
         
         
       })
@@ -87,15 +121,108 @@ function FindRecipe() {
   return (
     <div className="p-6 flex flex-row">
       <div className="bg-shittake text-black p-6 rounded-lg">
-        <h2 className="text-2xl text-white">Enter Ingredients</h2>
+        <h2 className="text-4xl text-white">AI Generated Recipes</h2>
 
         <Formik initialValues={initialValues} onSubmit={formik.handleSubmit}>
           <form
             className="flex flex-col mt-2 text-white"
             onSubmit={formik.handleSubmit}
           >
+          
+            <label htmlFor="settings" className='text-2xl mb-1'>
+              <button type='button' onClick={() => setIsOpen(!isOpen)}>
 
-            <label htmlFor="name">Ingredients</label>
+              Settings {isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+              
+              </button>
+            </label>  
+
+            { isOpen ? 
+              <>
+                <div className='m-2 flex flex-row justify-between items-center '>
+                  <div>
+                    <StraightenIcon  className='mr-2'/>
+                    <label htmlFor="settings" className='text-lg'>Strictness</label>
+                    <p className='text-sm'>Allow the model to get creative (1: Least Risky 10: Most Creative)</p>
+
+                  </div>
+                  <input 
+                    name={`strictness`}
+                    value={
+                      formik.values.strictness
+                        ? formik.values.strictness
+                        : ""
+                    }
+                    onChange={formik.handleChange}
+                    type='number'
+                    min='1'
+                    max='10'
+                    className='text-black h-[30px] text-lg rounded-lg p-1'
+                  />
+
+                </div>
+
+                <div className='m-2 flex flex-row justify-between items-center '>
+                  <div>
+                    <BlockIcon  className='mr-2'/>
+                    <label htmlFor="settings" className='text-lg'>Restrictions</label>
+                    <p className='text-sm'>Allergy or Dietary Restrictions</p>
+
+                  </div>
+                  <select
+                    name={`restrictions`}
+                    value={
+                      formik.values.restrictions
+                        ? formik.values.restrictions
+                        : ""
+                    }
+                    onChange={formik.handleChange}
+                    min='1'
+                    max='10'
+                    className='text-black h-[30px] text-lg rounded-lg p-1'
+                  >
+                    <option value=''>None</option>
+                    <option value='vegetarian'>Vegetarian</option>
+                  </select>
+
+                </div>
+
+
+                <div className='m-2 flex flex-row justify-between items-center '>
+                  <div>
+                    <LocalGroceryStoreIcon  className='mr-2'/>
+                    <label htmlFor="settings" className='text-lg'>Added Ingredients</label>
+                    <p className='text-sm'>Allow the recipe to be generated with additonal ingredients not listed</p>
+
+                  </div>
+                  <input
+                    name={`added_ingredients`}
+                    value={
+                      formik.values.added_ingredients
+                        ? formik.values.added_ingredients
+                        : ""
+                    }
+                    onChange={formik.handleChange}
+                    type='checkbox'
+                    className='text-black h-[30px] text-lg rounded-lg p-1'
+                  />
+              
+
+                </div>
+              
+              </>
+            
+            :
+              <>
+              </>
+            }
+
+
+
+
+            
+
+            <label htmlFor="name" className='text-2xl'>Ingredients</label>
 
             <FieldArray name="ingredients" validateOnChange={true}>
               {(fieldArrayProps) => {
@@ -121,7 +248,7 @@ function FindRecipe() {
                 }
 
                 return (
-                  <div>
+                  <div className='m-2'>
                     {ingredients.map((ingredient, index) => (
                       <div key={index} className="text-black text-nowrap">
                         <Field
@@ -200,18 +327,53 @@ function FindRecipe() {
       </div>
 
       <div className="border-1 w-[50%] justify-center m-12 ">
+
+
+      { isLoading ? 
+        <div className='w-full h-full ml-12 flex justify-center items-center'>
+
+          <h1 className='bold text-6xl mr-8'>
+            LOADING
+          </h1>
+
+        <div role="status">
+            <svg aria-hidden="true" class="w-[60px] h-[60px] text-champagne animate-spin dark:shittake fill-shittake" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+            </svg>
+            <span class="sr-only">Loading...</span>
+        </div>
+
+        </div>
+
+        :
+
+        <>
+        
         {
           aiRecipes ? 
+          
           <div className='bg-champagne p-4 rounded-lg'>
             <h1 className='text-4xl'>
               {aiRecipes.name}
             </h1>
+            <h2 className='text-shittake bold italic'>
+              { aiRecipes.notes ? 
+              <p> **{aiRecipes.notes} </p>
+              :
+              <></>
+              }
+            </h2>
+
+            <p>{aiRecipes.prep_time}</p>
+            <p>{aiRecipes.category}</p>
             <div>
               {aiRecipes.ingredients.map((ingredient) => 
               <div className='flex flex-row m-2 '> 
                 <h3 className='text-xl'>{ingredient.name} ||</h3> 
                 <p className="text-xl mr-4 ml-4">  {ingredient.amount}  </p> 
                 <p className="text-lg ">{ingredient.measurement_unit}</p> 
+                
               </div>) }
             </div>
             <div>
@@ -224,6 +386,16 @@ function FindRecipe() {
             <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'>Enter your ingredients!</h1>
           </>
         }
+        
+        
+        
+        
+        
+        
+        
+        </>
+      
+      }
       </div>
     </div>
   );
