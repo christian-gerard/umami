@@ -18,6 +18,9 @@ ipdb = '*'
 faker = '*'
 rich='*'
 flask_cors = '*'
+python-dotenv = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 

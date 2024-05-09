@@ -528,7 +528,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
 
 
 
-            <NavLink to={`/recipes/${id}`}>
+            <NavLink to={`/recipe/${id}`}>
               <div>
 
                 <div className='trapezoid'>

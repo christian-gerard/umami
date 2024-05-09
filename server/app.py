@@ -1,4 +1,4 @@
-from flask import request, session, g
+from flask import request, session, g, render_template
 from time import time
 from flask_restful import Resource
 from config import app, db, api
@@ -428,6 +428,17 @@ class CheckMe(Resource):
             return {"message": "Please log in"}, 400
 
 api.add_resource(CheckMe, '/me')
+
+
+# FRONT END ROUTES
+@app.route("/")
+@app.route("/profile")
+@app.route("/cookbook")
+@app.route("/recipe/<int:id>")
+@app.route("/findrecipes")
+
+def index(id=0):
+    return render_template("index.html")
 
 
 # # # # # Run App

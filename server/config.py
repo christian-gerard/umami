@@ -5,16 +5,24 @@ from flask_restful import Api
 from flask_session import Session
 from flask_bcrypt import Bcrypt
 from flask_marshmallow import Marshmallow
-from os import environ
+from dotenv import load_dotenv
+import os
+import ipdb
 from flask_cors import CORS
 
 # # # # # App
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../client/build',
+    template_folder='../client/build')
+
+load_dotenv()
 
 # # # # # App Declaration
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///cookbook.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = environ.get("SESSION_SECRET")
+app.secret_key = os.environ.get("SESSION_SECRET")
 app.config["SESSION_TYPE"] = "sqlalchemy"
 app.config["SESSION_SQLALCHEMY_TABLE"] = "sessions"
 

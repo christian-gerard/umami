@@ -27,7 +27,7 @@ const router = createBrowserRouter([
                 element: <Cookbook />,
             },
             {
-                path: '/recipes/:id',
+                path: '/recipe/:id',
                 element: <Recipe />
             },
             {
