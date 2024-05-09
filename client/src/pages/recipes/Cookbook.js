@@ -338,8 +338,8 @@ function Cookbook() {
                               className="m-1 p-1 border rounded-lg w-[120px]"
                             >
                               <option value=''>Measur.</option>
-                              <option value='pints'>Pint</option>
-                              <option value='quarts'>Quart</option>
+                              <option value='pint'>Pint</option>
+                              <option value='quart'>Quart</option>
                               <option value='cups'>Cup</option>
                               <option value='oz'>Ounce</option>
                               <option value='fl oz'>Fluid Ounce</option>

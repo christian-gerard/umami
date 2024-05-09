@@ -10,6 +10,11 @@ import { UserContext } from "../../context/UserContext";
 import RecipeForm from "../recipes/RecipeForm";
 import Nav from "../../components/Nav";
 import recipeimgHolder from '../../assets/recipeimgholder.png'
+import { useDropzone} from 'react-dropzone'
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+
 
 function Recipe({ id, name, steps, ingredients, category, prep_time, source, recipe_img, cookbooks }) {
   const { user, updateRecipes } = useContext(UserContext);
@@ -17,6 +22,15 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
   const [editMode, setEditMode] = useState(false);
   const [currentRecipe, setCurrentRecipe] = useState({});
   const nav = useNavigate();
+  const [files, setFiles] = useState([]);
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({
+    accept: 'image/*',
+    onDrop: acceptedFiles => {
+      setFiles(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })));
+    }
+  });
 
   const handleEdit = () => {
     setEditMode(!editMode);
@@ -60,6 +74,9 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
   const initialValues = {
     name: "",
     steps: "",
+    category: "",
+    source: "",
+    prep_time: "",
     ingredients: [
       {
         name: "",
@@ -73,13 +90,18 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
     initialValues,
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
-      console.log(formData)
+
+      formData['ingredients'] = JSON.stringify(formData['ingredients'])
+
+      const fd = new FormData()
+
+      fd.set("image_file", files[0])
+
+      for(let key in formData) { fd.set(key, formData[key])}
+
       fetch(`/recipes/${currentRecipe.id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: fd,
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
@@ -108,6 +130,9 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
               formik.setValues({
                 name: data.name,
                 steps: data.steps,
+                category: data.category,
+                source: data.source,
+                prep_time: data.prep_time,
                 ingredients: data.ingredients.map((ingredient) => ({
                   name: ingredient.food.name,
                   amount: ingredient.amount,
@@ -124,6 +149,9 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
     }
   }, [route.id, editMode]);
 
+  const removeFile = (name) => {
+    setFiles(files => files.filter(file => file.name !== name ))
+  }
 
   return (
     <>
@@ -173,158 +201,324 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
           </div>
 
           {editMode ? (
-            <div className="fixed inset-0 flex justify-center items-center transition-colors backdrop-blur">
-            <Formik
-              onSubmit={formik.handleSubmit}
-              initialValues={initialValues}
-            >
-                <form
-                  className=" bg-white p-12 w-[1000px] flex flex-col text-lg text-black rounded-xl border-2 border-shittake"
-                  onSubmit={formik.handleSubmit}
-                >
-                  <button
-                    className="bg-shittake text-white rounded-xl "
-                    type="button"
-                    onClick={() => setEditMode(!editMode)}
-                  >
-                    X
-                  </button>
-                  <label htmlFor="name">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.name}
-                    className="border rounded-lg p-1 m-1 "
-                    placeholder="Name"
-                  />
-                  {formik.errors.name && formik.touched.name && (
-                    <div className="error-message show">{formik.errors.name}</div>
-                  )}
-
-                  <label htmlFor="steps">Instructions</label>
-                  <input
-                    type="text"
-                    name="steps"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.steps}
-                    className="border rounded-lg p-1 m-1"
-                    placeholder="Instructions"
-                  />
-
-                  {formik.errors.steps && formik.touched.steps && (
-                    <div className="error-message show">
-                      {formik.errors.steps}
-                    </div>
-                  )}
-
-                  <label htmlFor="ingredients">Ingredients</label>
-
-                  <FieldArray name="ingredients" validateOnChange={true}>
-                    {(fieldArrayProps) => {
-                      const { push, remove, form } = fieldArrayProps;
-                      const { values } = form;
-                      const ingredients = values.ingredients || [];
-
-                      const handleAddIngredient = () => {
-                        push({ name: "", amount: "", measurement_unit: "" });
-                      };
-
-                      const handleDeleteIngredient = (index) => {
-
-                        if (index !== 0) {
-      
-                          remove(index)
-                          const updatedIngredients = [...formik.values.ingredients]
-                          updatedIngredients.splice(index, 1)
-                          formik.setFieldValue('ingredients',updatedIngredients)
-      
-                        }
-      
-                      }
-
-                      return (
-                        <div>
-                          {ingredients.map((ingredient, index) => (
-                            <div key={index} className="text-black">
-                              <Field
-                                name={`ingredients[${index}].name`}
-                                value={
-                                  formik.values.ingredients[index]
-                                    ? formik.values.ingredients[index].name
-                                    : ""
-                                }
-                                onChange={formik.handleChange}
-                                placeholder="Name"
-                                className="m-1 p-1 rounded-lg border w-[250px]"
-                              />
-                              <Field
-                                name={`ingredients[${index}].amount`}
-                                placeholder="Amount"
-                                value={
-                                  formik.values.ingredients[index]
-                                    ? formik.values.ingredients[index].amount
-                                    : ""
-                                }
-                                onChange={formik.handleChange}
-                                className="m-1 p-1 rounded-lg border w-[40px]"
-                              />
-                              <Field
-                                as='select'
-                                name={`ingredients[${index}].measurement_unit`}
-                                placeholder="Measurement"
-                                value={
-                                  formik.values.ingredients[index]
-                                    ? formik.values.ingredients[index].measurement_unit
-                                    : ""
-                                }
-                                onChange={formik.handleChange}
-                                className="border m-1 p-1 rounded-lg w-[100px]"
-                              >
-                                <option value=''>Measur.</option>
-                                <option value='pints'>Pint</option>
-                                <option value='quarts'>Quart</option>
-                                <option value='cups'>Cup</option>
-                                <option value='oz'>Ounce</option>
-                                <option value='fl oz'>Fluid Ounce</option>
-                                <option value='tbsp'>Tablespoon</option>
-                                <option value='tsp'>Teaspoon</option>
-                              </Field>
-
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteIngredient(index)}
-                                className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
-                              >
-                                −
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleAddIngredient}
-                                className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
-                              >
-                                +
-                              </button>
+                    <div className="fixed inset-0 flex justify-center items-center transition-colors backdrop-blur"> 
+                    <Formik
+                      onSubmit={formik.handleSubmit}
+                      initialValues={initialValues}
+                      className=""
+                    >
+                      <form
+                        onSubmit={formik.handleSubmit}
+                        className="bg-white border border-shittake rounded-lg p-2"
+                      >
+                        <button
+                          className="bg-shittake text-white rounded-xl mb-6 flex justify-center w-full "
+                          type="button"
+                          onClick={handleEdit}
+                        >
+                          X
+                        </button>
+            
+                        <div className='flex flex-row'>
+            
+                          <div className="flex flex-col mr-3">
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="name">
+                                Name                 
+                              </label>
+            
+                              {formik.errors.name && formik.touched.name && (
+                                <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.name.toUpperCase()}</div>
+                              )}
+            
                             </div>
-                          ))}
+                            <input
+                              type="text"
+                              name="name"
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.name}
+                              className="border p-1 m-1 rounded-lg"
+                              placeholder="Recipe Name"
+                            />
+            
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="category">
+                                Category                
+                              </label>
+            
+                              {formik.errors.category && formik.touched.category && (
+                                <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.category.toUpperCase()}</div>
+                              )}
+            
+                            </div>
+            
+                            <select
+                              as='select'
+                              name="category"
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.category}
+                              className="border p-1 m-1 rounded-lg"
+                              placeholder="Category"
+                            >
+                              <option value='' className='bold italic'>Select Category</option>
+                              <option value='breakfast'>Breakfast</option>
+                              <option value='lunch'>Lunch</option>
+                              <option value='dinner'>Dinner</option>
+                              <option value='snack'>Snack</option>
+                              <option value='dessert'>Dessert</option>
+                            </select>
+            
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="ingredients">
+                                Ingredients
+                              </label>
+            
+                            </div>
+            
+                            <FieldArray name="ingredients" validateOnChange={true}>
+                              {(fieldArrayProps) => {
+                                const { push, remove, form } = fieldArrayProps;
+                                const { values } = form;
+                                const ingredients = values.ingredients || [];
+            
+                                const handleAddIngredient = () => {
+                                  push({ name: "", amount: "", measurement_unit: "" });
+                                };
+            
+                                const handleDeleteIngredient = (index) => {
+            
+                                  if (index !== 0) {
+                
+                                    remove(index)
+                                    const updatedIngredients = [...formik.values.ingredients]
+                                    updatedIngredients.splice(index, 1)
+                                    formik.setFieldValue('ingredients',updatedIngredients)
+                
+                                  }
+                
+                                }
+            
+                                return (
+                                  <div>
+                                    {ingredients.map((ingredient, index) => (
+                                      <div key={index} className="text-black">
+                                        <Field
+                                          name={`ingredients[${index}].name`}
+                                          value={
+                                            formik.values.ingredients[index]
+                                              ? formik.values.ingredients[index].name
+                                              : ""
+                                          }
+                                          onChange={formik.handleChange}
+                                          placeholder="Name"
+                                          className="m-1 p-1 border rounded-lg w-[250px]"
+                                        />
+            
+                                        <Field
+                                          name={`ingredients[${index}].amount`}
+                                          placeholder="#"
+                                          value={
+                                            formik.values.ingredients[index]
+                                              ? formik.values.ingredients[index].amount
+                                              : ""
+                                          }
+                                          onChange={formik.handleChange}
+                                          className="m-1 p-1 border rounded-lg w-[40px]"
+                                        />
+                                        <Field
+                                          as='select'
+                                          name={`ingredients[${index}].measurement_unit`}
+                                          placeholder="Unit"
+                                          value={
+                                            formik.values.ingredients[index]
+                                              ? formik.values.ingredients[index].measurement_unit
+                                              : ""
+                                          }
+                                          onChange={formik.handleChange}
+                                          className="m-1 p-1 border rounded-lg w-[120px]"
+                                        >
+                                          <option value=''>Measur.</option>
+                                          <option value='pint'>Pint</option>
+                                          <option value='quart'>Quart</option>
+                                          <option value='cups'>Cup</option>
+                                          <option value='oz'>Ounce</option>
+                                          <option value='fl oz'>Fluid Ounce</option>
+                                          <option value='tbsp'>Tablespoon</option>
+                                          <option value='tsp'>Teaspoon</option>
+            
+                                        </Field>
+            
+                                        <button
+                                          type="button"
+                                          onClick={() => handleDeleteIngredient(index)}
+                                          className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
+                                        >
+                                          <RemoveIcon />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={handleAddIngredient}
+                                          className="p-1 m-1 w-[30px] bg-champagne text-black rounded-lg"
+                                        >
+                                          <AddIcon />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                );
+                              }}
+                            </FieldArray>
+                          </div>
+            
+                          <div className="flex flex-col  align-top ml-3">
+            
+                          <div className='flex flex-row'>
+            
+                            <label htmlFor="prep_time">
+                              Prep Time          
+                            </label>
+            
+                            {formik.errors.prep_time && formik.touched.prep_time && (
+                              <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.prep_time.toUpperCase()}</div>
+                            )}
+            
+                          </div>
+            
+                            <select
+                              as='select'
+                              name="prep_time"
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.prep_time}
+                              className="border p-1 m-1 rounded-lg"
+                              placeholder="Prep time"
+                            >
+                              <option value=''>Select Prep Time</option>
+                              <option value='10 min'>  less than 5 min</option>
+                              <option value='10 min'>  5 - 10 min</option>
+                              <option value='10 min'>  10 - 20 min</option>
+                              <option value='10 min'>  20 - 30 min</option>
+                              <option value='10 min'>  20 - 30 min</option>
+                            </select>
+            
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="source">
+                                Source        
+                              </label>
+            
+                              {formik.errors.source && formik.touched.source && (
+                                <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.source.toUpperCase()}</div>
+                              )}
+            
+                            </div>
+                            <input
+                              type="text"
+                              name="source"
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.source}
+                              className="border p-1 m-1 rounded-lg"
+                              placeholder="Where did you find this recipe?"
+                            />
+            
+            
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="recipe_img">
+                                Recipe Image
+                              </label>
+            
+                              {formik.errors.source && formik.touched.source && (
+                                <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.source.toUpperCase()}</div>
+                              )}
+            
+                            </div>
+            
+                            <div  {...getRootProps({className: 'dropzone'})}>
+                              <input {...getInputProps()} />
+                              <p className='bg-shittake border text-white p-2 rounded-lg'>
+            
+                                <UploadFileIcon />
+                                Drag or Click Here 
+                                
+                                </p>
+                            </div>
+            
+                              {files[0] ? 
+                              <div className='flex flex-row justify-between bg-champagne p-2 m-2 rounded-lg '> 
+            
+                                <div clasName='flex flex-row'>
+                                  <img alt='img_preview' src={files[0].preview} className='h-[50px] w-[50px]' />
+            
+                                  <div className='flex flex-col'> 
+            
+                                    <p>{files[0].name}</p>
+                                    <p>{files[0].size}</p>
+                                    
+                                  </div>
+            
+                                </div>
+            
+            
+                                <div className='flex flex-col'>
+            
+                                  <button 
+                                    className='bg-shittake text-white rounded-lg p-1'
+                                    onClick={() => removeFile(files[0].name)}
+                                  >
+                                    Remove
+                                  </button>
+            
+                                </div>
+            
+                              </div>
+                              : 
+                              <h1>No file Uploaded</h1>}
+            
+            
+                            <div className='flex flex-row'>
+            
+                              <label htmlFor="instructions">
+                                Instructions       
+                              </label>
+            
+                              {formik.errors.steps && formik.touched.steps && (
+                                <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.steps.toUpperCase()}</div>
+                              )}
+            
+                            </div>
+            
+                            <textarea
+                              name="steps"
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.steps}
+                              className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[200px] m-1 p-1"
+                              placeholder="Instructions for recipe (include any helpful tips as well!)"
+                            /> 
+            
+            
+                            
+            
+            
+            
+                          </div>
+            
                         </div>
-                      );
-                    }}
-                  </FieldArray>
-
-
-                  <button
-                    className="bg-shittake rounded-lg text-white "
-                    type="submit"
-                  >
-                    Update Recipe
-                  </button>
-                </form>
-
-            </Formik>
-            </div>
+            
+                        <button type ='submit' className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
+                          Add Recipe
+                        </button>
+            
+                      </form>
+                    </Formik>
+                    </div>
           ) : (
             <></>
           )}
