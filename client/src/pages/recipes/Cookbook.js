@@ -147,21 +147,6 @@ function Cookbook() {
         <div className="flex flex-row justify-between">
           <h1 className="text-5xl tracking-widest">My Cookbook</h1>
 
-          <input 
-          className='border text-black w-[250px]'
-          placeholder='Search Recipe Name...'
-          />
-
-          <select
-            className='border'
-          >
-            <option>Search Category</option>
-            <option>Breakfast</option>
-            <option>Lunch</option>
-            <option>Dinner</option>
-            <option>Snack</option>
-            <option>Dessert</option>
-          </select>
     
           <button
             className="text-lg bg-shittake hover:text-black rounded-lg p-2 text-white "
