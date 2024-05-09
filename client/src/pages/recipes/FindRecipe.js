@@ -60,7 +60,7 @@ function FindRecipe() {
 
       const response = openai.chat.completions.create({
         model: 'gpt-4',
-        temperature: 0.1,
+        temperature: formData.strictness * 0.1,
         messages: [{role: "user", content: `
 
 
@@ -70,6 +70,12 @@ function FindRecipe() {
             'Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE.' 
             : 
             '' }
+
+
+            ${formData.restrictions ? 
+              `Remove any ingredients that would violate a ${formData.restrictions} diet`
+              : 
+              '' }
         
           IF the ingredients are not generally used together, add a message to the notes saying the combination is unusual or avant garde. If the ingredients go well together do not add any messages to notes.
 
