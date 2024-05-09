@@ -1,6 +1,6 @@
 {
   "name": "umami",
-  "proxy": "http://localhost:5555/api/v1",
+  "proxy": "http://127.0.0.1:5555",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
