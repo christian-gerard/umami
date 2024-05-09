@@ -513,7 +513,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
                         </div>
             
                         <button type ='submit' className="text-lg bg-shittake text-white hover:bg-transparent rounded-lg w-full mt-6">
-                          Add Recipe
+                          Update Recipe
                         </button>
             
                       </form>
