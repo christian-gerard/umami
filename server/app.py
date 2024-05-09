@@ -198,9 +198,16 @@ class Recipes(Resource):
 
             recipe_img = files['image_file']
 
-            new_recipe_img = RecipeImg(name=recipe_img.name,mimetype=recipe_img.headers[1][1], recipe_id=recipe.id, img=recipe_img.read())
+            new_recipe_img = {
+                "name": recipe_img.name,
+                "mimetype": recipe_img.headers[1][1],
+                "recipe_id":recipe.id,
+                "img": recipe_img.read()
+            }
+            
+            
 
-            db.session.add(new_recipe_img)
+            db.session.add(recipe_img_schema.load(new_recipe_img))
 
 
 
