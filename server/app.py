@@ -15,7 +15,12 @@ from schemas.cookbook_schema import cookbook_schema, cookbooks_schema
 from schemas.food_schema import food_schema, foods_schema
 from schemas.recipe_schema import recipe_schema, recipes_schema
 from schemas.ingredient_schema import ingredient_schema, ingredients_schema
+from schemas.recipe_img_schema import recipe_img_schema, recipes_img_schema
+import json
 import ipdb
+
+
+
 
 # # # General Route
 # # Error Handling
@@ -147,7 +152,10 @@ class Recipes(Resource):
     def post(self):
         try:
 
-            data = request.get_json()
+
+            data = request.form
+            files = request.files
+
             recipe = recipe_schema.load({
                 "name" : data.get("name"),
                 "steps" : data.get("steps"),
@@ -164,7 +172,8 @@ class Recipes(Resource):
 
             # Find or Create ingredient
             ## Loop through ingredients
-            for ingredient in ingredients:
+
+            for ingredient in json.loads(ingredients):
                 if (food_obj := Food.query.filter_by(name=ingredient['name']).first()):
                     # INSTANTIATE INGEDIENT OBJECT
                     new_ingredient = {
@@ -186,16 +195,12 @@ class Recipes(Resource):
                     return {"Error": f"{ingredient.name} is not a listed food item"}, 400
                     
 
-            recipe_image = data.get('image_file')
 
-            binary = recipe_image.read()
+            recipe_img = files['image_file']
 
-            ipdb.set_trace()
+            new_recipe_img = RecipeImg(name=recipe_img.name,mimetype=recipe_img.headers[1][1], recipe_id=recipe.id, img=recipe_img.read())
 
-
-
-
-
+            db.session.add(new_recipe_img)
 
 
 

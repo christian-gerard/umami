@@ -1,24 +1,18 @@
-from . import ma, fields, validate, validates, Recipe, datetime, ingredient_schema, FileSize
+from . import ma, fields, validate, validates, RecipeImg, datetime, ingredient_schema
 
 class RecipeImgSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = RecipeImg
         load_instance = True
         ordered = True
-        partial = ('id', 'user')
+        partial = ()
 
     name = fields.String()
-
-    name = fields.String()
-    img = fields.File(
-        required=True,
-        validate=FileSize(min="1 MiB", max="2 MiB")
+    img = fields.String(
+        required=True
         )
     mimetype = fields.String()
     recipe_id = fields.String()
-
-
-
 
 
 

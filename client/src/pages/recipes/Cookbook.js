@@ -10,6 +10,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+
 function Cookbook() {
   const nav = useNavigate();
   const { user, updateRecipes } = useContext(UserContext);
@@ -72,7 +73,6 @@ function Cookbook() {
     category: "",
     prep_time: "",
     source: "",
-    recipe_img:"",
     ingredients: [
       {
         name: "",
@@ -87,16 +87,18 @@ function Cookbook() {
     validationSchema: recipeSchema,
     onSubmit: (formData) => {
 
+      formData['ingredients'] = JSON.stringify(formData['ingredients'])
+
+      const fd = new FormData()
+
+      fd.set("image_file", files[0])
+
+      for(let key in formData) { fd.set(key, formData[key])}
 
 
-      const formDataWithImage = {...formData, "image_file": files[0]}
-      
       fetch("/recipes", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formDataWithImage),
+        body: fd,
       }).then((res) => {
         if (res.ok) {
           return res.json().then((data) => {
@@ -137,7 +139,6 @@ function Cookbook() {
     );
   }, [user]);
 
-console.log(files[0] )
 
   return (
     <div className="p-6 mt-6 ">

@@ -23,7 +23,6 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
 
     category = fields.String()
     source = fields.String()
-    recipe_img = fields.String()
     prep_time = fields.String()
 
     user_id = fields.Integer()
@@ -31,7 +30,10 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
     updated_at = fields.DateTime()
 
     user = fields.Nested('UserSchema')
-    cookbooks = fields.Nested('CookbookSchema')
+
+    recipe_img = fields.Nested('RecipeImgSchema')
+
+
     ingredients = fields.Nested(
         'IngredientSchema',
         exclude=('recipe',),
