@@ -39,6 +39,6 @@ class Ingredient(db.Model, SerializerMixin):
     
     @validates('measurement_unit')
     def validate_measurement(self, key, measurement_unit):
-        units = ('cups', 'fluid ounces', 'liters')
+        units = ('cups', 'fl oz', 'liters', 'pint', 'quart', 'oz', 'lbs', 'tbsp', 'tsp', 'serving')
         assert measurement_unit in units, "Must match approved units"
         return measurement_unit

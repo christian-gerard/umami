@@ -219,14 +219,6 @@ class Recipes(Resource):
             return {"Error": str(e)}, 400
 
 
-
-
-
-
-
-
-
-
 api.add_resource(Recipes, '/recipes')
 
 class RecipeById(Resource):
@@ -245,9 +237,11 @@ class RecipeById(Resource):
     def patch(self,id):
         try:
             # INIT DATA
-            data = request.get_json()
+            data = request.form
+            img = request.files
             ingredients = data.get('ingredients')
             recipe = Recipe.query.filter(Recipe.id == id).first()
+            current_recipe_image = RecipeImg.query.filter_by(recipe_id=recipe.id).first()
 
 
 
@@ -256,6 +250,9 @@ class RecipeById(Resource):
             new_recipe = {
                 "name" : data.get("name"),
                 "steps" : data.get("steps"),
+                "category": data.get("category"),
+                "source": data.get("source"),
+                "prep_time": data.get("prep_time"),
                 "user_id" : session.get("user_id")
             }
             if recipe:
@@ -278,7 +275,7 @@ class RecipeById(Resource):
             db.session.commit()
 
 
-            for ingredient in ingredients:
+            for ingredient in json.loads(ingredients):
                 if (food_obj := Food.query.filter_by(name=ingredient['name']).first()):
                     
 
@@ -297,6 +294,25 @@ class RecipeById(Resource):
                         
                 else:
                     return {"Error": f"{ingredient['name']} is not a valid ingredient"}
+                
+
+
+
+                if current_recipe_image:
+                    db.session.delete(current_recipe_image)
+
+                if len(img) > 0:
+                    file = img['image_file']
+
+                    new_recipe_img = {
+                        "name": file.name,
+                        "mimetype": file.headers[1][1],
+                        "recipe_id":recipe.id,
+                        "img": file.read()
+                    }
+
+                    db.session.add(recipe_img_schema.load(new_recipe_img))
+                
                 
             db.session.commit()
 

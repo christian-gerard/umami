@@ -12,7 +12,7 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
 
     measurement_unit = fields.String(
         require=True, 
-        validate=validate.OneOf(choices=['cups', 'fluid ounces', 'liters']
+        validate=validate.OneOf(choices=['cups', 'fl oz', 'liters', 'pint', 'quart', 'oz', 'lbs', 'tbsp', 'tsp', 'serving']
             )
     )
 
