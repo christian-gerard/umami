@@ -1,4 +1,5 @@
 from . import ma, fields, validate, validates, Recipe, datetime, ingredient_schema
+import ipdb
 
 class RecipeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -30,6 +31,8 @@ class RecipeSchema(ma.SQLAlchemyAutoSchema):
     updated_at = fields.DateTime()
 
     user = fields.Nested('UserSchema')
+
+
 
     recipe_img = fields.Nested('RecipeImgSchema')
 

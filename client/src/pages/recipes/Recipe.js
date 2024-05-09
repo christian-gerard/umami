@@ -23,6 +23,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
   };
 
   const handleDelete = () => {
+
     fetch(`/recipes/${route.id}`, {
       method: "DELETE",
       headers: {
@@ -148,7 +149,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
               Delete
             </button>
             <p className="text-4xl m-2 ">{currentRecipe.name}</p>
-            <img alt='recipe_img' src={currentRecipe.recipe_img} className='w-[200px] h-[200px] '/> 
+            <img alt='recipe_img' src={ currentRecipe.recipe_img ? `data:${currentRecipe.recipe_img.mimetype};base64,${currentRecipe.recipe_img.img}` : recipeimgHolder } className='w-[200px] h-[200px] '/> 
             <p>Category: {currentRecipe.category}</p>
             <p>Source: {currentRecipe.source}</p>
             <p>Prep Time: {currentRecipe.prep_time}</p>
@@ -347,7 +348,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
                   <p>Category: {category}</p>
                   <p>Source: {source}</p>
                   <p>Prep Time: {prep_time}</p>
-                  <img src={ recipe_img ? recipe_img : recipeimgHolder } alt='recipeimagedetails' className='w-[50px] h-[50px] border rounded-2xl'/>
+                  <img src={ recipe_img ? `data:${recipe_img.mimetype};base64,${recipe_img.img}` : recipeimgHolder } alt='recipeimagedetails' className='w-[50px] h-[50px] border rounded-2xl'/>
       
                   <p className="text-m">{steps.slice(0, 25)}...</p>
       

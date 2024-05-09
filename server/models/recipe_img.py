@@ -18,7 +18,7 @@ class RecipeImg(db.Model, SerializerMixin):
 
     # # # # # Relationship
 
-    recipe = db.relationship('Recipe', back_populates='recipe_imgs')
+    recipe = db.relationship('Recipe', back_populates='recipe_img')
 
     # # # # # Serialize
     serialize_rules=()

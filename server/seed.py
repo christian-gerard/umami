@@ -31,7 +31,7 @@ with app.app_context():
     print('\n')
 
     # # # # # Clean Database
-    print('[purple]Cleaning Database 🧽 [/purple]...\n')
+    # print('[purple]Cleaning Database 🧽 [/purple]...\n')
     try:
         User.query.delete()
         Cookbook.query.delete()
@@ -41,7 +41,7 @@ with app.app_context():
         db.session.commit()
         print('\t[green]Cleaning Complete[/green] ✅\n')
     except Exception as e:
-        print('\t[red]Cleaning Failed[/red] 😞\n')
+        print(f'\t[red]Cleaning Failed[/red] {str(e)} 😞\n')
         sys.exit(1)
 
     # # # # # Generate Users
