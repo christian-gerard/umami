@@ -54,7 +54,7 @@ function Cookbook() {
     .required(),
     category: string()
     .required()
-    .oneOf(['breakfast', 'lunch']),
+    .oneOf(['breakfast', 'lunch', 'dinner', 'snack', 'dessert']),
     prep_time: string()
     .required(),
     ingredients: array().of(
