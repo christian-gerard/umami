@@ -9,6 +9,8 @@ import { useDropzone} from 'react-dropzone'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 function Cookbook() {
@@ -54,7 +56,7 @@ function Cookbook() {
     .required(),
     category: string()
     .required()
-    .oneOf(['breakfast', 'lunch']),
+    .oneOf(['breakfast', 'lunch', 'dinner', 'snack', 'dessert']),
     prep_time: string()
     .required(),
     ingredients: array().of(
@@ -145,11 +147,11 @@ function Cookbook() {
     <div className="p-6 mt-6 ">
       <div className="flex flex-col flex-grow ">
         <div className="flex flex-row justify-between">
-          <h1 className="text-5xl tracking-widest">My Cookbook</h1>
+          <h1 className="text-2xl sm:text-5xl tracking-widest">My Cookbook</h1>
 
     
           <button
-            className="text-lg bg-shittake hover:text-black rounded-lg p-2 text-white "
+            className="text-[1em] flex-nowrap sm:text-lg bg-shittake hover:text-black rounded-lg p-2 text-white "
             onClick={newRecipe}
           >
             New Recipe +
@@ -166,16 +168,16 @@ function Cookbook() {
           )}
         </div>
 
-        <div className=" text-xl flex justify-center pt-6">
+        <div className=" text-xl flex justify-center pb-6 pt-6">
           <button className="bg-champagne p-1 rounded-lg" onClick={handlePrev}>
-            Prev
+            <ArrowBackIcon />
           </button>
           <div className="text-xl">
             &nbsp;{currentPage} of {pages}&nbsp;
           </div>{" "}
           &nbsp;
           <button className="bg-champagne p-1 rounded-lg" onClick={handleNext}>
-            Next
+            <ArrowForwardIcon />
           </button> 
         </div>
       </div>

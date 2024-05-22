@@ -10,7 +10,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
-const API_KEY = process.env.REACT_APP_OPENAI_API_KEY
+const API_KEY = 'sk-proj-iHIOHOj9ejUA7VJ82PNAT3BlbkFJZW2Zznl0K2Ys7bZWvGI9'
 console.log(API_KEY)
 
 const openai = new OpenAI({
@@ -23,7 +23,7 @@ const openai = new OpenAI({
 
 function FindRecipe() {
   const [aiRecipes, setAiRecipes] = useState('')
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const ingredientSearchSchema = object({
     settings: string(),
@@ -60,53 +60,66 @@ function FindRecipe() {
 
       const response = openai.chat.completions.create({
         model: 'gpt-4',
-        temperature: formData.strictness * 0.1,
+        temperature: 0.5,
         messages: [{role: "user", content: `
 
 
           Could you generate a recipe for me based on the following ingredients? I only have these ingredients and NOTHING ELSE.
 
-          ${formData.added_ingredients ? 
-            'Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE.' 
+          
+          
+          ${formData.restrictions ? 
+            `Remove any ingredients that would violate a ${formData.restrictions} diet`
             : 
             '' }
-
-
-            ${formData.restrictions ? 
-              `Remove any ingredients that would violate a ${formData.restrictions} diet`
-              : 
-              '' }
-        
-          IF the ingredients are not generally used together, add a message to the notes saying the combination is unusual or avant garde. If the ingredients go well together do not add any messages to notes.
-
-
-
-
-
-
-
-
-
-
-
-
-
-          ONLY INCLUDE THE JSON
-
-          Please return the recipe in a parseable JSON format 
-          {
-            "name": "recipeName", 
-            "ingredients": [{"name": "ingredientName", "amount": "amount", "measurement_unit": ""}], 
-            "prep_time": "",
-            "category" : "",
-            "steps":"",
-            "notes": ""
-          
+            
+            IF the ingredients are not generally used together, add a message to the notes saying the recipe could end up being strange or unappetizing. If the ingredients could go well together do not add any messages to notes.
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ONLY INCLUDE THE JSON
+            
+            Please return the recipe in a parseable JSON format 
+            {
+              "name": "recipeName", 
+              "ingredients": [{"name": "ingredientName", "amount": "amount", "measurement_unit": ""}], 
+              "prep_time": "",
+              "category" : "",
+              "steps":"",
+              "notes": ""
+              
+            }
+            
+            ${formData.ingredients.map((ingredient) =>  `${ingredient.amount} ${ingredient.measurement_unit} of ${ingredient.name} `)}
+            
+            ${formData.added_ingredients ? 
+              'Add extra ingredients to the ingredients array that would make the recipe better and as delicous as possible'
+            :
+            
+              'Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE.' 
           }
 
-          ${formData.ingredients.map((ingredient) =>  `${ingredient.amount} ${ingredient.measurement_unit} of ${ingredient.name} `)}
+          ${formData.strictness ? 
+            `On a scale of 1 out of 10 (1 being normal recipes and 10 being very bizzarre experimental dishes) Generate a recipe that is a ${formData.strictness} out of 10`
+          :
+          
+            'Do not add any ingredients that I do not list as available ingredients. I DO NOT HAVE ANYTHING OTHER THAN WHAT I LIST BELOW. ONLY PUT THOSE IN THE RECIPE.' 
+        }
 
-        
+
+          
+
+            
         `
         }]
       }).then(resp => {
@@ -126,7 +139,7 @@ function FindRecipe() {
   });
 
   return (
-    <div className="p-6 flex flex-row">
+    <div className="p-6 flex flex-col md:flex-row">
       <div className="bg-shittake text-black p-6 rounded-lg">
         <h2 className="text-4xl text-white">AI Generated Recipes</h2>
 
@@ -190,6 +203,8 @@ function FindRecipe() {
                   >
                     <option value=''>None</option>
                     <option value='vegetarian'>Vegetarian</option>
+                    <option value='pescitarian'>Pescitarian</option>
+                    <option value='peanut allergy'>Peanut Allergy</option>
                   </select>
 
                 </div>
@@ -267,7 +282,7 @@ function FindRecipe() {
                           }
                           onChange={formik.handleChange}
                           placeholder="Name"
-                          className="m-1 p-1 rounded-lg w-[250px]"
+                          className="m-1 p-1 rounded-lg w-[100px] md:w-[250px]"
                         />
                         <Field
                           name={`ingredients[${index}].amount`}
@@ -292,7 +307,8 @@ function FindRecipe() {
                           onChange={formik.handleChange}
                           className="m-1 p-1 rounded-lg w-[80px]"
                         >
-                          <option value=''>Measur.</option>
+                          <option value=''>Serving</option>
+                          <option value='package'>Package</option>
                           <option value='pints'>Pint</option>
                           <option value='quarts'>Quart</option>
                           <option value='cups'>Cup</option>
@@ -333,7 +349,7 @@ function FindRecipe() {
         </Formik>
       </div>
 
-      <div className="border-1 w-[50%] justify-center m-12 ">
+      <div className="border-1 w-[80%] justify-center m-4 ">
 
 
       { isLoading ? 
@@ -360,11 +376,11 @@ function FindRecipe() {
         {
           aiRecipes ? 
           
-          <div className='bg-champagne p-4 rounded-lg'>
-            <h1 className='text-4xl'>
+          <div className='bg-champagne p-4 rounded-lg '>
+            <h1 className='text-5xl bold m-2 tracking-wide'>
               {aiRecipes.name}
             </h1>
-            <h2 className='text-shittake bold italic'>
+            <h2 className='text-shittake bold italic text-xl ml-2 mr-2 mb-6'>
               { aiRecipes.notes ? 
               <p> **{aiRecipes.notes} </p>
               :
@@ -372,25 +388,28 @@ function FindRecipe() {
               }
             </h2>
 
-            <p>{aiRecipes.prep_time}</p>
-            <p>{aiRecipes.category}</p>
-            <div>
+            <p className='text-2xl bold mb-2'>{aiRecipes.prep_time}</p>
+            <p className='text-2xl bold mb-4'>{aiRecipes.category}</p>
+            <p className='text-3xl bold mb-2'>Ingredients</p>
+
+            <div className='mb-6'>
               {aiRecipes.ingredients.map((ingredient) => 
               <div className='flex flex-row m-2 '> 
-                <h3 className='text-xl'>{ingredient.name} ||</h3> 
-                <p className="text-xl mr-4 ml-4">  {ingredient.amount}  </p> 
-                <p className="text-lg ">{ingredient.measurement_unit}</p> 
+                <h3 className='text-2xl'>{ingredient.name}  | </h3> 
+                <p className="text-xl mr-4 ml-2">  {ingredient.amount}  </p> 
+                <p className="text-xl bold italic ">{ingredient.measurement_unit}</p> 
                 
               </div>) }
             </div>
-            <div>
+            <p className='text-3xl bold mb-2'>Instructions</p>
+            <div className='text-xl tracking-wide'>
 
               {aiRecipes.steps}
             </div>
           </div>
           :
           <>
-            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'>Enter your ingredients!</h1>
+            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'> 🍄 </h1>
           </>
         }
         

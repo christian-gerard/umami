@@ -14,6 +14,9 @@ import { useDropzone} from 'react-dropzone'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 function Recipe({ id, name, steps, ingredients, category, prep_time, source, recipe_img, cookbooks }) {
@@ -108,7 +111,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
             console.log(data)
             const updatedRecipes = user.recipes.map((recipe) => recipe.id === currentRecipe.id ? data : recipe)
             updateRecipes(updatedRecipes)
-            nav("/cookbook");
+            handleEdit()
             toast.success("Recipe Updated");
           });
         } else {
@@ -154,51 +157,108 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
   }
 
   return (
-    <>
+    <div className='flex justify-center'>
       {route.id ? (
+
+
+
         <div>
-          <div className='bg-champagne p-6 m-2 rounded-lg'>
-          <button
-              className=" border rounded-lg p-2 m-2 text-black"
-              onClick={ () => nav('/cookbook')}
-            >
-              Back
-            </button>
-            <button
-              className="bg-shittake rounded-lg p-2 m-2 text-white"
-              onClick={handleEdit}
-            >
-              Edit
-            </button>
-            <button
-              className="bg-white rounded-lg p-2 m-2 text-shittake "
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-            <p className="text-4xl m-2 ">{currentRecipe.name}</p>
-            <img alt='recipe_img' src={ currentRecipe.recipe_img ? `data:${currentRecipe.recipe_img.mimetype};base64,${currentRecipe.recipe_img.img}` : recipeimgHolder } className='w-[200px] h-[200px] '/> 
-            <p>Category: {currentRecipe.category}</p>
-            <p>Source: {currentRecipe.source}</p>
-            <p>Prep Time: {currentRecipe.prep_time}</p>
 
-            <h1 className='text-2xl italic'>Instructions</h1>
-            <p className="text-lg">{currentRecipe.steps}</p>
 
-            <h1 className='text-2xl italic'>Ingredients</h1>
-            {currentRecipe.ingredients ? (
-              <ul>
-                {currentRecipe.ingredients.map((ingredient) => (
-                  <li>
-                    {ingredient.food.name} {ingredient.amount}{" "}
-                    {ingredient.measurement_unit}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No Ingredients</p>
-            )}
+          <div className='bg-champagne p-6 m-2 rounded-lg flex flex-col m-6'>
+
+            <div className='flex justify-between mb-8'>
+
+              <button
+                  className=" border rounded-lg p-2 m-2 text-black w-[75px]"
+                  onClick={ () => nav('/cookbook')}
+                >
+                  <ArrowBackIcon/>
+                  Back
+                </button>
+
+                <div className='flex flex-row'>
+
+                  <button
+                    className="bg-shittake rounded-lg p-2 m-2 text-white w-[100px] flex items-center"
+                    onClick={handleEdit}
+                  >
+                    <EditIcon className='mr-1'/>
+                    EDIT
+                  </button>
+                  <button
+                    className="bg-white rounded-lg p-2 m-2 text-shittake w-[100px] flex items-center"
+                    onClick={handleDelete}
+                  >
+                    <DeleteIcon className='mr-1'/>
+                    DELETE
+                  </button>
+
+                </div>
+
+            </div>
+
+            <div className='flex flex-row justify-between'>
+
+              <div>
+
+                <p className="text-6xl bold mb-6 tracking-wide ">{currentRecipe.name}</p>
+                <img alt='recipe_img' src={ currentRecipe.recipe_img ? `data:${currentRecipe.recipe_img.mimetype};base64,${currentRecipe.recipe_img.img}` : recipeimgHolder } className='w-[400px] h-[400px] ml-8 rounded-2xl'/> 
+
+              </div>
+
+
+              <div className='mt-16 text-xl'>
+                <h1 className='text-4xl bold mb-4'>Details</h1>
+                <p className='mb-6'>Category: {currentRecipe.category}</p>
+                <p className='mb-6'>Source: {currentRecipe.source}</p>
+                <p className='mb-6'>Prep Time: {currentRecipe.prep_time}</p>
+              </div>
+
+
+              <div className='flex flex-col mt-16 text-2xl'>
+
+                <h1 className='text-4xl bold mb-4'>Ingredients</h1>
+                  {currentRecipe.ingredients ? (
+                    <ul>
+                      {currentRecipe.ingredients.map((ingredient) => (
+                        <li>
+                          {ingredient.food.name} {ingredient.amount}{" "}
+                          {ingredient.measurement_unit}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No Ingredients</p>
+                  )}
+
+
+
+              </div>
+
+              <div className='w-[30%] p-2 mt-16'>
+
+                <h1 className='text-4xl bold mb-4'>Instructions</h1>
+                <p className="text-lg">{currentRecipe.steps}</p>
+
+
+
+              </div>
+
+
+            </div>
+
+
           </div>
+
+
+
+
+
+
+
+
+
 
           {editMode ? (
                     <div className="fixed inset-0 flex justify-center items-center transition-colors backdrop-blur"> 
@@ -529,36 +589,31 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
 
 
             <NavLink to={`/recipes/${id}`}>
-              <div>
+              <div className="p-2 bg-champagne flex flex-col md:flex-row text-black m-4 justify-between rounded-lg w-[200px] md:w-[450px] md:h-[250px] border">
 
-                <div className='trapezoid'>
-
-                </div>
-
-                <div className="p-2 bg-champagne text-black m-2 rounded-lg w-[300px] h-full">
+                <div className='flex justify-between flex-col'>
                   <div className="flex flex-row justify-between">
-                    <p className="text-lg font-bold">{name}</p>
+                    <p className="text-2xl font-bold">{name}</p>
                   </div>
-                  <p>Category: {category}</p>
-                  <p>Source: {source}</p>
-                  <p>Prep Time: {prep_time}</p>
-                  <img src={ recipe_img ? `data:${recipe_img.mimetype};base64,${recipe_img.img}` : recipeimgHolder } alt='recipeimagedetails' className='w-[50px] h-[50px] border rounded-2xl'/>
-      
-                  <p className="text-m">{steps.slice(0, 25)}...</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Category:</b>{category[0].toUpperCase()}{category.substring(1)}</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Source:</b>{source[0].toUpperCase()}{source.substring(1)}</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Prep Time:</b>{prep_time[0].toUpperCase()}{prep_time.substring(1)}</p>
       
                   {ingredients ? (
                     <>
-                      <p>Ingredients: {ingredients.length}</p>
+                      <p className='text-sm md:text-lg'><b className='text-sm md:text-lg tracking-wide mr-2'>Ingredients:</b> {ingredients.length}</p>
 
                     </>
                   ) : (
                     <>
-                      <h1 className='text-black'>No Recipes</h1>
+                      <h1 className='text-sm md:text-lg text-black'>No Recipes</h1>
                     </>
                   )}
+      
                 </div>
 
 
+                  <img src={ recipe_img ? `data:${recipe_img.mimetype};base64,${recipe_img.img}` : recipeimgHolder } alt='recipeimagedetails' className='w-[80px] h-[80px] md:w-[120px] md:h-[120px] border rounded-2xl'/>
 
 
 
@@ -566,7 +621,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
             </NavLink>
 
       )}
-    </>
+    </div>
   );
 }
 
