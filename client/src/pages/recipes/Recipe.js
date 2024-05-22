@@ -157,7 +157,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
   }
 
   return (
-    <>
+    <div className='flex justify-center'>
       {route.id ? (
 
 
@@ -589,31 +589,31 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
 
 
             <NavLink to={`/recipes/${id}`}>
-              <div className="p-2 bg-champagne flex flex-row text-black m-4 justify-between rounded-lg w-[450px] h-[250px] border">
+              <div className="p-2 bg-champagne flex flex-col md:flex-row text-black m-4 justify-between rounded-lg w-[200px] md:w-[450px] md:h-[250px] border">
 
                 <div className='flex justify-between flex-col'>
                   <div className="flex flex-row justify-between">
                     <p className="text-2xl font-bold">{name}</p>
                   </div>
-                  <p className='text-lg'><b className='text-lg  tracking-wide mr-2'> Category:</b>{category[0].toUpperCase()}{category.substring(1)}</p>
-                  <p className='text-lg'><b className='text-lg  tracking-wide mr-2'> Source:</b>{source[0].toUpperCase()}{source.substring(1)}</p>
-                  <p className='text-lg'><b className='text-lg  tracking-wide mr-2'> Prep Time:</b>{prep_time[0].toUpperCase()}{prep_time.substring(1)}</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Category:</b>{category[0].toUpperCase()}{category.substring(1)}</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Source:</b>{source[0].toUpperCase()}{source.substring(1)}</p>
+                  <p className='text-lg'><b className='text-sm md:text-lg  tracking-wide mr-2'> Prep Time:</b>{prep_time[0].toUpperCase()}{prep_time.substring(1)}</p>
       
                   {ingredients ? (
                     <>
-                      <p className='text-lg'><b className='text-lg tracking-wide mr-2'>Ingredients:</b> {ingredients.length}</p>
+                      <p className='text-sm md:text-lg'><b className='text-sm md:text-lg tracking-wide mr-2'>Ingredients:</b> {ingredients.length}</p>
 
                     </>
                   ) : (
                     <>
-                      <h1 className='text-black'>No Recipes</h1>
+                      <h1 className='text-sm md:text-lg text-black'>No Recipes</h1>
                     </>
                   )}
       
                 </div>
 
 
-                  <img src={ recipe_img ? `data:${recipe_img.mimetype};base64,${recipe_img.img}` : recipeimgHolder } alt='recipeimagedetails' className='w-[120px] h-[120px] border rounded-2xl'/>
+                  <img src={ recipe_img ? `data:${recipe_img.mimetype};base64,${recipe_img.img}` : recipeimgHolder } alt='recipeimagedetails' className='w-[80px] h-[80px] md:w-[120px] md:h-[120px] border rounded-2xl'/>
 
 
 
@@ -621,7 +621,7 @@ function Recipe({ id, name, steps, ingredients, category, prep_time, source, rec
             </NavLink>
 
       )}
-    </>
+    </div>
   );
 }
 

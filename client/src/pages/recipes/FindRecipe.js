@@ -139,7 +139,7 @@ function FindRecipe() {
   });
 
   return (
-    <div className="p-6 flex flex-row">
+    <div className="p-6 flex flex-col md:flex-row">
       <div className="bg-shittake text-black p-6 rounded-lg">
         <h2 className="text-4xl text-white">AI Generated Recipes</h2>
 
@@ -282,7 +282,7 @@ function FindRecipe() {
                           }
                           onChange={formik.handleChange}
                           placeholder="Name"
-                          className="m-1 p-1 rounded-lg w-[250px]"
+                          className="m-1 p-1 rounded-lg w-[100px] md:w-[250px]"
                         />
                         <Field
                           name={`ingredients[${index}].amount`}
@@ -349,7 +349,7 @@ function FindRecipe() {
         </Formik>
       </div>
 
-      <div className="border-1 w-[50%] justify-center m-12 ">
+      <div className="border-1 w-[80%] justify-center m-4 ">
 
 
       { isLoading ? 
@@ -409,7 +409,7 @@ function FindRecipe() {
           </div>
           :
           <>
-            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'>Enter your ingredients!</h1>
+            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'> 🍄 </h1>
           </>
         }
         
