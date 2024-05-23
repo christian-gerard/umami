@@ -14,6 +14,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 function Cookbook() {
+
+  
   const nav = useNavigate();
   const { user, updateRecipes } = useContext(UserContext);
   const [pages, setPages] = useState(1);
@@ -51,9 +53,11 @@ function Cookbook() {
     name: string()
     .required(),
     steps: string()
-    .required(),
+    .required()
+    .min(10),
     source: string()
-    .required(),
+    .required()
+    .min(3),
     category: string()
     .required()
     .oneOf(['breakfast', 'lunch', 'dinner', 'snack', 'dessert']),
@@ -64,7 +68,15 @@ function Cookbook() {
         name: string()
         .required(),
         amount: number(),
-        measurement_unit: string(),
+        measurement_unit: string()
+        .oneOf([
+          'pint',
+          'fl oz',
+          'oz',
+          'cup',
+          'tbsp',
+          'tsp'
+        ]),
       }),
     ),
   });
@@ -191,7 +203,7 @@ function Cookbook() {
         >
           <form
             onSubmit={formik.handleSubmit}
-            className="bg-white border border-shittake rounded-lg p-2"
+            className="bg-white border border-shittake rounded-lg p-2 w-[80%]"
           >
             <button
               className="bg-shittake text-white rounded-xl mb-6 flex justify-center w-full "
@@ -201,7 +213,7 @@ function Cookbook() {
               X
             </button>
 
-            <div className='flex flex-row'>
+            <div className='flex flex-col lg:flex-row'>
 
               <div className="flex flex-col mr-3">
                 <div className='flex flex-row'>
@@ -349,6 +361,10 @@ function Cookbook() {
                             >
                               <AddIcon />
                             </button>
+
+                            {/* {formik.errors.ingredients[index] && formik.touched.ingredients[index] && (
+                              <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.category}</div>
+                            )} */}
                           </div>
                         ))}
                       </div>
@@ -357,7 +373,7 @@ function Cookbook() {
                 </FieldArray>
               </div>
 
-              <div className="flex flex-col  align-top ml-3">
+              <div className="flex flex-col  align-top ml-3 w-full pr-4">
 
               <div className='flex flex-row'>
 
@@ -405,7 +421,7 @@ function Cookbook() {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.source}
-                  className="border p-1 m-1 rounded-lg"
+                  className="border p-1 m-1 rounded-lg w-full"
                   placeholder="Where did you find this recipe?"
                 />
 
@@ -416,9 +432,6 @@ function Cookbook() {
                     Recipe Image
                   </label>
 
-                  {formik.errors.source && formik.touched.source && (
-                    <div className="text-shittake pr-2 pl-2 cormorant-garamond-bold"> **{formik.errors.source.toUpperCase()}</div>
-                  )}
 
                 </div>
 
@@ -433,10 +446,10 @@ function Cookbook() {
                 </div>
 
                   {files[0] ? 
-                  <div className='flex flex-row justify-between bg-champagne p-2 m-2 rounded-lg '> 
+                  <div className='flex flex-row justify-between bg-champagne p-2 m-2 rounded-lg'> 
 
                     <div clasName='flex flex-row'>
-                      <img alt='img_preview' src={files[0].preview} className='h-[50px] w-[50px]' />
+                      <img alt='img_preview' src={files[0].preview} className='h-[50px] w-full' />
 
                       <div className='flex flex-col'> 
 
@@ -481,7 +494,7 @@ function Cookbook() {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.steps}
-                  className="resize-none border rounded-lg overflow-y-auto w-[600px] h-[200px] m-1 p-1"
+                  className="resize-none border rounded-lg overflow-y-auto w-full h-[200px] m-1 p-1"
                   placeholder="Instructions for recipe (include any helpful tips as well!)"
                 /> 
 
