@@ -81,12 +81,12 @@ function Auth() {
   });
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen  ">
+    <div className="flex flex-col justify-center items-center h-screen overflow-y-hidden  ">
       <div className="bg-shittake p-6 text-white rounded-xl">
         <h1 className="text-6xl flex justify-center tracking-[0.25em] p-6">
           UMAMI
         </h1>
-        <h2 className="text-3xl">{isLogin ? "Login" : "Sign Up"}</h2>
+        <h2 className="text-3xl ml-2">{isLogin ? "Login" : "Sign Up"}</h2>
         <Formik onSubmit={formik.handleSubmit}>
           <Form
             className="flex justify-center flex-col p-1"

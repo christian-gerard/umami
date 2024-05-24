@@ -12,7 +12,7 @@ function App() {
 
   return (
 
-      <main className='h-screen cormorant-garamond p-6 select-none "'>
+      <main className=' cormorant-garamond p-6 select-none overflow-y-hidden"'>
         <Toaster
           position='top-center'
           containerClassName='toaster-style'
@@ -42,7 +42,7 @@ function App() {
         />
         <Nav />
         <Outlet />
-        <Footer />
+
       </main>
 
   );

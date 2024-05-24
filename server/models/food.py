@@ -13,8 +13,9 @@ class Food(db.Model, SerializerMixin):
     
     # ADD UNIQUE CONSTRAINT TO 'NAME'
     name = db.Column(db.String(100) )
-    description = db.Column(db.String)
-    type_id = db.Column(db.Integer)
+
+    # description = db.Column(db.String)
+    # type_id = db.Column(db.Integer)
 
     # # # # # Relationship
     ingredients = db.relationship('Ingredient', back_populates='food')
@@ -35,8 +36,3 @@ class Food(db.Model, SerializerMixin):
         # assert name, "Name must be provided"
         return name
        
-    @validates('type')
-    def validate_type(self, key, type):
-        types = ('fruit', 'vegetable', 'grain', 'protein', 'dairy', 'oils'  )
-        assert type in types, "Type must match the types listed: fruits, vegetables... "
-        return type
