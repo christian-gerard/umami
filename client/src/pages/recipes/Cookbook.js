@@ -1,6 +1,6 @@
 import Recipe from "./Recipe";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { UserContext } from "../../context/UserContext";
 import { useFormik, Field, FieldArray, Formik } from "formik";
 import toast from "react-hot-toast";
@@ -8,16 +8,24 @@ import { object, string, array, number } from "yup";
 import { useDropzone} from 'react-dropzone'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddIcon from '@mui/icons-material/Add';
+import { Autocomplete, TextField, debounce } from "@mui/material";
 import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 function Cookbook() {
+
   const nav = useNavigate();
   const { user, updateRecipes } = useContext(UserContext);
   const [pages, setPages] = useState(1);
   const [recipeForm, setRecipeForm] = useState(false);
+  const [filterKeyword, setFilterKeyword] = useState("");
+  const [submitCode, setSubmitCode] = useState("");
+  const debouncedSetter = useMemo(
+    () => debounce((keyword) => setFilterKeyword(keyword), 500),
+    []
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * 10;
   const endIndex = currentPage * 10;
@@ -268,6 +276,7 @@ function Cookbook() {
                     const { values } = form;
                     const ingredients = values.ingredients || [];
 
+
                     const handleAddIngredient = () => {
                       push({ name: "", amount: "", measurement_unit: "" });
                     };
@@ -285,21 +294,35 @@ function Cookbook() {
     
                     }
 
+
+
                     return (
                       <div>
                         {ingredients.map((ingredient, index) => (
                           <div key={index} className="text-black">
-                            <Field
-                              name={`ingredients[${index}].name`}
-                              value={
-                                formik.values.ingredients[index]
+
+
+                            <Autocomplete
+                                value={
+                                  formik.values.ingredients[index]
                                   ? formik.values.ingredients[index].name
                                   : ""
-                              }
-                              onChange={formik.handleChange}
-                              placeholder="Name"
-                              className="m-1 p-1 border rounded-lg w-[250px]"
-                            />
+                                }
+                                onChange={(_, newValue) =>
+                                  formik.setFieldValue(ingredients[index].name, newValue)}
+                                options={['hummus','beef']}
+                                onInputChange={(_, newInputValue) => debouncedSetter(newInputValue)}
+                                // filterOptions={(x) => x} // Disable the default filtering as we handle it ourselves
+                                getOptionLabel={(option) => {
+                                  return (
+                                    option
+                                  );
+                                }}
+                                renderInput={(params) => (
+                                  <TextField {...params} placeholder="Name" id="" />
+                                )}
+                                className="m-1 p-1 border rounded-lg w-[250px] text-[0.4em]"
+                              />
 
                             <Field
                               name={`ingredients[${index}].amount`}
@@ -324,6 +347,7 @@ function Cookbook() {
                               onChange={formik.handleChange}
                               className="m-1 p-1 border rounded-lg w-[120px]"
                             >
+
                               <option value=''>Measur.</option>
                               <option value='pint'>Pint</option>
                               <option value='quart'>Quart</option>

@@ -14,7 +14,7 @@ import random
 from rich import print
 import ipdb
 
-foundation_foods = 'data/foundation_foods.csv'
+foundation_foods = 'data/food.csv'
 
 def seed_foods(csv_file):
     with open(csv_file, 'r', newline='', encoding='utf-8') as file:
@@ -55,15 +55,6 @@ with app.app_context():
                 )
         test_user.password_hash = 'Password1!'
         users.append(test_user)
-
-        for _ in range(10):
-            user = User(
-                username=fake.first_name(), 
-                email=fake.email(), 
-                role=1 
-                )
-            user.password_hash = 'Password1!'
-            users.append(user)
         db.session.add_all(users)
         db.session.commit()
         print('\t[green]Users Complete[/green] ✅\n')
@@ -87,7 +78,7 @@ with app.app_context():
     try:
         recipes = []
         for _ in range(10):
-            recipe = Recipe(name=fake.word(), steps='StepsTestFORTENCHAR', user_id=random.randint(1,3) )
+            recipe = Recipe(name=fake.word(), steps='StepsTestFORTENCHAR', user_id=1 )
             recipes.append(recipe)
         db.session.add_all(recipes)
         db.session.commit()
@@ -115,7 +106,7 @@ with app.app_context():
     try:
         ingredients = []
         for _ in range(3):
-            ingredient = Ingredient(amount=10, measurement_unit='cups', food_id=random.randint(1,3), recipe_id=random.randint(1,2) )
+            ingredient = Ingredient(amount=10, measurement_unit='cups', food_id=random.randint(1,100), recipe_id=random.randint(1,3) )
             ingredients.append(ingredient)
         db.session.add_all(ingredients)
         db.session.commit()

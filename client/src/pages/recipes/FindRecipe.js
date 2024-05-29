@@ -8,6 +8,9 @@ import BlockIcon from '@mui/icons-material/Block';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import TuneIcon from '@mui/icons-material/Tune';
+import KitchenIcon from '@mui/icons-material/Kitchen';
+
 
 
 const API_KEY = 'sk-proj-iHIOHOj9ejUA7VJ82PNAT3BlbkFJZW2Zznl0K2Ys7bZWvGI9'
@@ -39,7 +42,7 @@ function FindRecipe() {
   const initialValues = {
     added_ingredients: "",
     restrictions: "",
-    strictness: "",
+    strictness: 1,
     ingredients: [
       {
         name: "",
@@ -152,7 +155,7 @@ function FindRecipe() {
             <label htmlFor="settings" className='text-2xl mb-1'>
               <button type='button' onClick={() => setIsOpen(!isOpen)}>
 
-              Settings {isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+              <TuneIcon / > Settings {isOpen ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
               
               </button>
             </label>  
@@ -244,7 +247,7 @@ function FindRecipe() {
 
             
 
-            <label htmlFor="name" className='text-2xl'>Ingredients</label>
+            <label htmlFor="name" className='text-2xl'> <KitchenIcon / > Ingredients</label>
 
             <FieldArray name="ingredients" validateOnChange={true}>
               {(fieldArrayProps) => {
@@ -409,7 +412,9 @@ function FindRecipe() {
           </div>
           :
           <>
-            <h1 className='text-2xl bg-champagne flex justify-center p-12 rounded-lg'> 🍄 </h1>
+            <h1 className='text-4xl bg-champagne flex justify-center p-12 rounded-lg'> 
+              Input Ingredients & Adjust Settings..
+            </h1>
           </>
         }
         
